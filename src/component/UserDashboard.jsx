@@ -1,0 +1,14 @@
+import { Link } from "react-router";
+
+const UserDashboard = () => {
+    return (
+        <>
+        <Link><li className="py-2"> Wishlist</li></Link> 
+        <Link><li className="py-2"> Property Bought</li></Link>
+        <Link><li className="py-2"> My Reviews</li></Link>
+        </>
+    );
+  };
+  
+  export default UserDashboard;
+  
