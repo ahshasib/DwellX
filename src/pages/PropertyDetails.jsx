@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router";
+import axios from "axios";
 import {
   FaHeart,
   FaMapMarkerAlt,
@@ -8,51 +10,82 @@ import {
   FaPaperPlane
 } from "react-icons/fa";
 
-const sampleProperty = {
-  id: 1,
-  title: "Beachfront Villa in Goa",
-  description:
-    "This luxurious beachfront villa offers stunning ocean views, modern architecture, and spacious rooms perfect for a relaxing vacation or permanent residence.",
-  location: "Candolim Beach, Goa",
-  price: "৳ 2,50,000 - ৳ 3,00,000",
-  agent: "Rohit Sen",
-  image:
-    "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1470&q=80",
-  reviews: [
-    { user: "Rahim", comment: "Beautiful place and great experience!" },
-    { user: "Anika", comment: "Loved the view and the environment." }
-  ]
-};
-
 const PropertyDetails = () => {
+  const { id } = useParams(); // URL ID
+  const [property, setProperty] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [wishlist, setWishlist] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [newReview, setNewReview] = useState("");
 
+  // Fetch property data from server
+  useEffect(() => {
+    const fetchProperty = async () => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/property/${id}`);
+        setProperty(res.data);
+      } catch (err) {
+        console.error("Error fetching property:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProperty();
+  }, [id]);
+
   const handleWishlist = () => {
     setWishlist(true);
-    // এখানে Wishlist ডাটাবেজে POST করতে পারেন
-    console.log("Added to wishlist:", sampleProperty.id);
+    console.log("Added to wishlist:", property._id);
+    // You can POST to wishlist collection here
   };
 
   const handleReviewSubmit = () => {
-    // এখানে ডাটাবেজে review POST করতে পারেন
     console.log("New Review:", newReview);
+    // You can POST new review to database here
     setShowModal(false);
     setNewReview("");
   };
 
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="text-center py-20 text-xl font-semibold text-gray-700">
+        Loading...
+      </div>
+    );
+  }
+
+  // Show not found
+  if (!property) {
+    return (
+      <div className="text-center py-20 text-xl font-semibold text-red-500">
+        No Property Found
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4 md:px-20">
       <div className="max-w-5xl mx-auto bg-white shadow-lg rounded-2xl overflow-hidden">
-        <img src={sampleProperty.image} alt={sampleProperty.title} className="w-full h-80 object-cover" />
+        <img
+          src={property.image}
+          alt={property.title}
+          className="w-full h-80 object-cover"
+        />
 
         <div className="p-6">
           <div className="flex justify-between items-center mb-2">
-            <h1 className="text-2xl md:text-3xl font-bold text-indigo-700">{sampleProperty.title}</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-indigo-700">
+              {property.title}
+            </h1>
             <button
               onClick={handleWishlist}
-              className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition ${wishlist ? "bg-red-100 text-red-600" : "bg-indigo-100 text-indigo-600"}`}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition ${
+                wishlist
+                  ? "bg-red-100 text-red-600"
+                  : "bg-indigo-100 text-indigo-600"
+              }`}
             >
               <FaHeart />
               {wishlist ? "Wishlisted" : "Add to Wishlist"}
@@ -60,16 +93,19 @@ const PropertyDetails = () => {
           </div>
 
           <div className="flex items-center text-gray-600 text-sm mb-4">
-            <FaMapMarkerAlt className="mr-1" /> {sampleProperty.location}
+            <FaMapMarkerAlt className="mr-1" /> {property.location}
           </div>
 
-          <p className="text-gray-700 mb-6">{sampleProperty.description}</p>
+          <p className="text-gray-700 mb-6">{property.description}</p>
 
-          <div className="text-xl font-semibold text-indigo-700 mb-2">Price Range:</div>
-          <p className="mb-4">{sampleProperty.price}</p>
+          <div className="text-xl font-semibold text-indigo-700 mb-2">
+            Price Range:
+          </div>
+          <p className="mb-4">{property.price}</p>
 
           <div className="text-lg font-medium flex items-center gap-2 text-gray-600">
-            <FaUserAlt /> Agent: <span className="text-indigo-700">{sampleProperty.agent}</span>
+            <FaUserAlt /> Agent:{" "}
+            <span className="text-indigo-700">{property.agent.name}</span>
           </div>
 
           {/* Review Section */}
@@ -85,12 +121,18 @@ const PropertyDetails = () => {
             </div>
 
             <div className="space-y-4">
-              {sampleProperty.reviews.map((review, index) => (
-                <div key={index} className="p-4 bg-gray-100 rounded-lg">
-                  <div className="font-semibold text-indigo-700">{review.user}</div>
-                  <p className="text-gray-700">{review.comment}</p>
-                </div>
-              ))}
+              {property.reviews?.length > 0 ? (
+                property.reviews.map((review, index) => (
+                  <div key={index} className="p-4 bg-gray-100 rounded-lg">
+                    <div className="font-semibold text-indigo-700">
+                      {review.user}
+                    </div>
+                    <p className="text-gray-700">{review.comment}</p>
+                  </div>
+                ))
+              ) : (
+                <p className="text-gray-500">No reviews yet.</p>
+              )}
             </div>
           </div>
         </div>
@@ -106,7 +148,9 @@ const PropertyDetails = () => {
             >
               <FaTimes />
             </button>
-            <h3 className="text-xl font-bold mb-4 text-gray-800">Write a Review</h3>
+            <h3 className="text-xl font-bold mb-4 text-gray-800">
+              Write a Review
+            </h3>
             <textarea
               value={newReview}
               onChange={(e) => setNewReview(e.target.value)}

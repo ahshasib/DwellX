@@ -7,15 +7,19 @@ import Login from "../pages/Login";
 import Register from "../pages/Register";
 import PropertyDetails from "../pages/PropertyDetails";
 import DashboardLayout from "../pages/DashboardLayout";
+import AddProperty from "../pages/AddProperty";
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <Mainlayout />,
     children: [
-      { path: '/', element: <Home /> },
+      { path: '/', 
+        element: <Home />,
+        loader:()=>fetch(`${import.meta.env.VITE_API_URL}/properties`)
+       },
       { path: '/allproperties', element: <PrivateRoute><AllProperties /></PrivateRoute> },
-      { path: '/property', element: <PrivateRoute><PropertyDetails /></PrivateRoute> },
+      { path: '/property/:id', element: <PrivateRoute><PropertyDetails /></PrivateRoute> },
       { path: '/login', element: <Login /> },
       { path: '/register', element: <Register /> },
     ],
@@ -34,7 +38,7 @@ const router = createBrowserRouter([
 
 //       // Agent routes
 //       { path: 'agent/profile', element: <AgentRoute><AgentProfile /></AgentRoute> },
-//       { path: 'agent/add-property', element: <AgentRoute><AddProperty /></AgentRoute> },
+         { path: 'add-property', element: <AddProperty />},
 //       { path: 'agent/my-properties', element: <AgentRoute><MyProperties /></AgentRoute> },
 //       { path: 'agent/update/:id', element: <AgentRoute><UpdateProperty /></AgentRoute> },
 //       { path: 'agent/my-sold', element: <AgentRoute><MySold /></AgentRoute> },

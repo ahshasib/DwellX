@@ -42,7 +42,8 @@ createuser,
 loading,
 user,
 signIn,
-logout
+logout,
+setuser
 
 }
 

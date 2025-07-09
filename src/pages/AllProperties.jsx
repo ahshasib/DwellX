@@ -10,100 +10,21 @@ import {
   FaRulerCombined,
   FaShareAlt,
 } from "react-icons/fa";
+import EmptyState from "../component/EmptyState";
+import { useLoaderData } from "react-router";
 
-const data = [
-  {
-    id: 1,
-    image:
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1470&q=80",
-    type: "Villa",
-    status: "buy",
-    location: "Candolim Beach, Goa",
-    title: "Beachfront Villa in Goa",
-    price: " ৳ 2,50,000",
-    beds: 4,
-    baths: 4,
-    size: "4500 sqft",
-    views: 69,
-  },
-  {
-    id: 1,
-    image:
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1470&q=80",
-    type: "Villa",
-    status: "buy",
-    location: "Candolim Beach, Goa",
-    title: "Beachfront Villa in Goa",
-    price: " ৳ 2,50,000",
-    beds: 4,
-    baths: 4,
-    size: "4500 sqft",
-    views: 69,
-  },
-  {
-    id: 1,
-    image:
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1470&q=80",
-    type: "Villa",
-    status: "buy",
-    location: "Candolim Beach, Goa",
-    title: "Beachfront Villa in Goa",
-    price: " ৳ 2,50,000",
-    beds: 4,
-    baths: 4,
-    size: "4500 sqft",
-    views: 69,
-  },
-  {
-    id: 1,
-    image:
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1470&q=80",
-    type: "Villa",
-    status: "buy",
-    location: "Candolim Beach, Goa",
-    title: "Beachfront Villa in Goa",
-    price: " ৳ 2,50,000",
-    beds: 4,
-    baths: 4,
-    size: "4500 sqft",
-    views: 69,
-  },
-  {
-    id: 1,
-    image:
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1470&q=80",
-    type: "Villa",
-    status: "buy",
-    location: "Candolim Beach, Goa",
-    title: "Beachfront Villa in Goa",
-    price: " ৳ 2,50,000",
-    beds: 4,
-    baths: 4,
-    size: "4500 sqft",
-    views: 69,
-  },
-  {
-    id: 2,
-    image:
-      "https://images.unsplash.com/photo-1613977257363-707ba934822a?auto=format&fit=crop&w=1470&q=80",
-    type: "House",
-    status: "buy",
-    location: "Old Manali, Himachal Pradesh",
-    title: "Cozy House in Manali",
-    price: "₹ 15,00,000",
-    beds: 3,
-    baths: 3,
-    size: "3500 sqft",
-    views: 95,
-  },
-];
+
 
 const AllPropertiesPage = () => {
+  const data = []
   const [layout, setLayout] = useState("grid");
   const [search, setSearch] = useState("");
 
   return (
-    <div className=" min-h-screen py-12 px-4 md:px-10 bg-gradient-to-br from-purple-50 via-white to-indigo-50 pb-16">
+   <>
+   {
+    data && data.length > 0 ? <>
+     <div className=" min-h-screen py-12 px-4 md:px-10 bg-gradient-to-br from-purple-50 via-white to-indigo-50 pb-16">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row items-center justify-between border border-indigo-100 gap-4 mb-10 p-6 rounded-2xl shadow-lg bg-info-100">
           <div className="flex items-center gap-3 bg-white shadow px-4 py-2 rounded-full w-full md:w-[50%]">
@@ -209,6 +130,10 @@ const AllPropertiesPage = () => {
         </div>
       </div>
     </div>
+    </> : <EmptyState></EmptyState>
+   }
+   </>
+   
   );
 };
 

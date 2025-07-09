@@ -8,58 +8,79 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Helmet } from 'react-helmet-async';
 import { AuthContext } from '../context/AuthProvider';
+import { updateProfile } from 'firebase/auth';
+import { imageUpload } from '../api/utils';
+import { useNavigate } from 'react-router';
 
 const Register = () => {
  
-
-  const { createuser} = use(AuthContext)
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const { createuser,setuser} = use(AuthContext)
   const [passError,setPassError] = useState("");
 
-  const Submitform = (e) => {
+  const Submitform = async (e) => {
     e.preventDefault();
-  const form = e.target;
-  const email = form.email.value;
-  const password = form.password.value;
-
-
-  if (password.length < 6){
-    toast.error("Password length must be min 6 character");
-    return
-  }
-  if (!/[A-Z]/.test(password)) {
-    toast.error("Password must include at least one capital letter");
-    return;
-  }
-
-  // Check small letter
-  if (!/[a-z]/.test(password)) {
-    toast.error("Password must include at least one small letter");
-    return;
-  }
-
-  else{
-    setPassError("")
-  }
-
-
-  createuser(email,password)
-  .then((userCredential) => {
-    const user = userCredential.user;
-
-    Swal.fire({
-      icon: 'success',
-      title: 'Logout Successful!',
-      text: `Welcom ${user.email}!`,
-      confirmButtonColor: '#3085d6',
-      confirmButtonText: 'OK'
-    })
-
-  })
-  .catch((error) => {
-    const errorCode = error.code;
-    const errorMessage = error.message;
-  });
+    setLoading(true); // ✅ loading শুরু
+    
+    const form = e.target;
+    const name = form.name.value;
+    const email = form.email.value;
+    const password = form.password.value;
+    const imageFile = form.image.files[0];
+  
+    try {
+      const imageUrl = await imageUpload(imageFile);
+  
+      if (password.length < 6) {
+        toast.error("Password length must be at least 6 characters");
+        setLoading(false);
+        return;
+      }
+      if (!/[A-Z]/.test(password)) {
+        toast.error("Password must include at least one capital letter");
+        setLoading(false);
+        return;
+      }
+      if (!/[a-z]/.test(password)) {
+        toast.error("Password must include at least one small letter");
+        setLoading(false);
+        return;
+      }
+  
+      const userCredential = await createuser(email, password);
+      const user = userCredential.user;
+  
+      await updateProfile(user, {
+        displayName: name,
+        photoURL: imageUrl,
+      });
+  
+      // ✅ optional: setuser manually if needed
+      setuser({
+        ...user,
+        displayName: name,
+        photoURL: imageUrl,
+      });
+  
+      Swal.fire({
+        icon: 'success',
+        title: 'Registration Successful!',
+        text: `Welcome ${user.email}!`,
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'OK'
+      }).then(() => {
+        navigate("/"); // ✅ success হলে navigate করো
+      });
+  
+    } catch (error) {
+      console.error("Registration error:", error);
+      toast.error(error.message);
+    } finally {
+      setLoading(false); // ✅ শেষ হলে loading বন্ধ করো
+    }
   };
+  
 
 
   return (
@@ -91,10 +112,10 @@ const Register = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Photo Url</label>
+          <label className="block text-sm font-medium text-gray-700">Upload Photo</label>
           <input
-            type="text"
-            name="photoUrl"
+            type="file"
+            name="image"
             required
             className="mt-1 w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
             placeholder="your photo url"
@@ -127,7 +148,7 @@ const Register = () => {
           type="submit"
           className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-300"
         >
-          Log In
+           {loading ? <span class='loading loading-dots loading-xs'></span> : "Register"}
         </button>
       </form>
     </motion.div>

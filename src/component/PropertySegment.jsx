@@ -1,73 +1,15 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { FaHeart, FaBath, FaBed, FaRulerCombined, FaMapMarkerAlt, FaArrowRight } from "react-icons/fa";
+import { Link, useLoaderData } from "react-router";
 
 const categories = ["All Properties", "Apartments", "Villas", "Houses"];
 
-const properties = [
-    {
-        id: 1,
-        title: "Cozy House in Manali",
-        location: "Old Manali, Himachal Pradesh",
-        beds: 3,
-        baths: 3,
-        size: "3500 sqft",
-        price: "৳15,00,000",
-        image: "https://i.ibb.co/m5pcJtKr/vecteezy-modern-concrete-house-exterior-luxury-villa-design-real-67237467.jpg",
-    },
-    {
-        id: 1,
-        title: "Cozy House in Manali",
-        location: "Old Manali, Himachal Pradesh",
-        beds: 3,
-        baths: 3,
-        size: "3500 sqft",
-        price: "৳15,00,000",
-        image: "https://i.ibb.co/m5pcJtKr/vecteezy-modern-concrete-house-exterior-luxury-villa-design-real-67237467.jpg",
-    },
-    {
-        id: 1,
-        title: "Cozy House in Manali",
-        location: "Old Manali, Himachal Pradesh",
-        beds: 3,
-        baths: 3,
-        size: "3500 sqft",
-        price: "৳15,00,000",
-        image: "https://i.ibb.co/m5pcJtKr/vecteezy-modern-concrete-house-exterior-luxury-villa-design-real-67237467.jpg",
-    },
-    {
-        id: 1,
-        title: "Cozy House in Manali",
-        location: "Old Manali, Himachal Pradesh",
-        beds: 3,
-        baths: 3,
-        size: "3500 sqft",
-        price: "৳15,00,000",
-        image: "https://i.ibb.co/m5pcJtKr/vecteezy-modern-concrete-house-exterior-luxury-villa-design-real-67237467.jpg",
-    },
-    {
-        id: 2,
-        title: "Modern Apartment",
-        location: "Sector 21, Noida",
-        beds: 2,
-        baths: 2,
-        size: "1200 sqft",
-        price: "৳35,00,000",
-        image: "https://i.ibb.co/m5pcJtKr/vecteezy-modern-concrete-house-exterior-luxury-villa-design-real-67237467.jpg",
-    },
-    {
-        id: 3,
-        title: "Luxurious Villa",
-        location: "Beverly Hills, California",
-        beds: 5,
-        baths: 4,
-        size: "6000 sqft",
-        price: "৳2,50,00,000",
-        image: "https://i.ibb.co/m5pcJtKr/vecteezy-modern-concrete-house-exterior-luxury-villa-design-real-67237467.jpg",
-    },
-];
+
+    
 
 const PropertySegment = () => {
+    const properties = useLoaderData()
     const [active, setActive] = useState("All Properties");
 
     return (
@@ -141,18 +83,20 @@ const PropertySegment = () => {
                                     <FaBath className="text-purple-500" /> {item.baths} Baths
                                 </p>
                                 <p className="flex items-center gap-1 text-sm text-gray-700 dark:text-white">
-                                    <FaRulerCombined className="text-green-600" />{item.size}</p>
+                                    <FaRulerCombined className="text-green-600" />{item.sqft} sqft</p>
                             </div>
 
 
 
                             <div className="flex items-center justify-between pt-4">
                                 <p className="text-lg font-bold text-blue-600 dark:text-blue-400">
-                                    {item.price}
+                                ৳ {item.price}
                                 </p>
+                                <Link to={`/property/${item._id}`}>
                                 <button className="px-4 py-1.5 text-sm bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full shadow hover:from-blue-700 hover:to-purple-700 transition-all">
-                                    Purchase
+                                    See Details
                                 </button>
+                                </Link>
                             </div>
                         </div>
                     </motion.div>

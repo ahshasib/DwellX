@@ -1,13 +1,15 @@
-import { useState } from "react";
+import { use, useState } from "react";
 import { NavLink, Outlet, useLocation } from "react-router";
 import { FaBars, FaUserCircle } from "react-icons/fa";
 import AdminDashboard from "../component/AdminDashboard";
 import UserDashboard from "../component/UserDashboard";
 import AgentDashboard from "../component/AgentDashboard";
+import { AuthContext } from "../context/AuthProvider";
 
 const DashboardLayout = () => {
     const [isOpen, setIsOpen] = useState(false);
     const location = useLocation();
+    const{user} = use(AuthContext)
 
     const toggleSidebar = () => setIsOpen(!isOpen);
 
@@ -34,7 +36,7 @@ const DashboardLayout = () => {
 
             {/* Sidebar */}
             <aside
-                className={`fixed md:static top-0 left-0 h-full md:h-screen bg-indigo-100 w-64 md:w-[20%] p-4 z-40 transition-transform duration-300 ease-in-out
+                className={`fixed md:sticky top-0 left-0 h-full md:h-screen bg-indigo-100 w-64 md:w-[20%] p-4 z-40 transition-transform duration-300 ease-in-out
           ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}
             >
 
@@ -54,8 +56,8 @@ const DashboardLayout = () => {
 
                 {/* User Profile */}
                 <div className="text-center mb-6 mt-5">
-                    <FaUserCircle className="text-6xl text-indigo-600 mx-auto mb-2" />
-                    <h2 className="text-lg font-semibold text-gray-800">Hasibul Islam</h2>
+                    <img src={user?.photoURL} className="w-12 rounded-full mx-auto mb-2" />
+                    <h2 className="text-lg font-semibold text-gray-800">{user?.displayName}</h2>
                     <button className="mt-2 text-sm text-white bg-indigo-600 px-4 py-1 rounded-full hover:bg-indigo-700 transition">
                         View Profile
                     </button>
@@ -63,14 +65,14 @@ const DashboardLayout = () => {
 
                 {/* Menu List */}
                 <ul className="space-y-3">
-                    <AdminDashboard />
+                    {/* <AdminDashboard /> */}
                     <UserDashboard />
                     <AgentDashboard />
                 </ul>
             </aside>
 
             {/* Outlet */}
-            <main className="flex-1 bg-white p-6 md:ml-0 ml-0 mt-16 md:mt-0">
+            <main className="flex-1 bg-gradient-to-br from-purple-100 via-white to-blue-100 p-6 md:ml-0 ml-0 mt-16 md:mt-0">
                 <Outlet />
             </main>
         </div>
