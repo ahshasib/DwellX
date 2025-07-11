@@ -8,6 +8,8 @@ import Register from "../pages/Register";
 import PropertyDetails from "../pages/PropertyDetails";
 import DashboardLayout from "../pages/DashboardLayout";
 import AddProperty from "../pages/AddProperty";
+import Wishlist from "../pages/Wishlist";
+import MakeOffer from "../pages/MakeOffer";
 
 const router = createBrowserRouter([
   {
@@ -30,7 +32,8 @@ const router = createBrowserRouter([
     children: [
 //       // User routes
 //       { path: 'user/profile', element: <UserRoute><UserProfile /></UserRoute> },
-//       { path: 'user/wishlist', element: <UserRoute><Wishlist /></UserRoute> },
+         { path: 'user/wishlist', element: <Wishlist /> },
+         { path: 'user/make-offer/:id', element: <MakeOffer /> },
 //       { path: 'user/bought', element: <UserRoute><BoughtProperties /></UserRoute> },
 //       { path: 'user/reviews', element: <UserRoute><MyReviews /></UserRoute> },
 //       { path: 'user/make-offer/:id', element: <UserRoute><MakeOffer /></UserRoute> },

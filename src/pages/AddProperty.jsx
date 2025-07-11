@@ -42,6 +42,7 @@ const AddProperty = () => {
         agent: {
           name: user.displayName,
           email: user.email,
+          image:user.photoURL
         },
       };
   

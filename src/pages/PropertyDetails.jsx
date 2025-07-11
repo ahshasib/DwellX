@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { useParams } from "react-router";
+import { useState, useEffect, useContext } from "react";
+import { useNavigate, useParams } from "react-router";
 import axios from "axios";
 import {
   FaHeart,
@@ -7,18 +7,24 @@ import {
   FaUserAlt,
   FaCommentDots,
   FaTimes,
-  FaPaperPlane
+  FaPaperPlane,
 } from "react-icons/fa";
+import Loading from "../component/Loading";
+import EmptyState from "../component/EmptyState";
+import { AuthContext } from "../context/AuthProvider";
 
 const PropertyDetails = () => {
-  const { id } = useParams(); // URL ID
+  const { id } = useParams();
   const [property, setProperty] = useState(null);
   const [loading, setLoading] = useState(true);
   const [wishlist, setWishlist] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [newReview, setNewReview] = useState("");
 
-  // Fetch property data from server
+  const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  // Load property
   useEffect(() => {
     const fetchProperty = async () => {
       try {
@@ -30,40 +36,59 @@ const PropertyDetails = () => {
         setLoading(false);
       }
     };
-
     fetchProperty();
   }, [id]);
 
-  const handleWishlist = () => {
-    setWishlist(true);
-    console.log("Added to wishlist:", property._id);
-    // You can POST to wishlist collection here
+  // ✅ Check if already wishlisted
+  useEffect(() => {
+    const checkWishlist = async () => {
+      if (!property || !user) return;
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/wishlist/check`, {
+          params: {
+            propertyId: property._id,
+            userEmail: user.email,
+          },
+        });
+
+        if (res.data.exists) {
+          setWishlist(true);
+        }
+      } catch (err) {
+        console.error("Wishlist check failed:", err);
+      }
+    };
+
+    checkWishlist();
+  }, [property, user]);
+
+  // ✅ Add to wishlist
+  const handleWishlist = async () => {
+    const wishlistItem = {
+      propertyId: property._id,
+      title: property.title,
+      image: property.image,
+      price: property.price,
+      location: property.location,
+      userEmail: user.email,
+      addedAt: new Date(),
+    };
+
+    try {
+      await axios.post(`${import.meta.env.VITE_API_URL}/wishlist`, wishlistItem);
+      setWishlist(true);
+      navigate("/dashboard/user/wishlist");
+    } catch (err) {
+      if (err.response?.status === 409) {
+        setWishlist(true); // already exists
+      } else {
+        console.error("Wishlist failed:", err);
+      }
+    }
   };
 
-  const handleReviewSubmit = () => {
-    console.log("New Review:", newReview);
-    // You can POST new review to database here
-    setShowModal(false);
-    setNewReview("");
-  };
-
-  // Show loading state
-  if (loading) {
-    return (
-      <div className="text-center py-20 text-xl font-semibold text-gray-700">
-        Loading...
-      </div>
-    );
-  }
-
-  // Show not found
-  if (!property) {
-    return (
-      <div className="text-center py-20 text-xl font-semibold text-red-500">
-        No Property Found
-      </div>
-    );
-  }
+  if (loading) return <Loading />;
+  if (!property) return <EmptyState />;
 
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4 md:px-20">
@@ -81,10 +106,11 @@ const PropertyDetails = () => {
             </h1>
             <button
               onClick={handleWishlist}
+              disabled={wishlist}
               className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition ${
                 wishlist
-                  ? "bg-red-100 text-red-600"
-                  : "bg-indigo-100 text-indigo-600"
+                  ? "bg-red-100 text-red-600 cursor-not-allowed"
+                  : "bg-indigo-100 text-indigo-600 hover:bg-indigo-200"
               }`}
             >
               <FaHeart />
@@ -104,11 +130,19 @@ const PropertyDetails = () => {
           <p className="mb-4">{property.price}</p>
 
           <div className="text-lg font-medium flex items-center gap-2 text-gray-600">
-            <FaUserAlt /> Agent:{" "}
-            <span className="text-indigo-700">{property.agent.name}</span>
+            {property.agent?.image ? (
+              <img
+                src={property.agent.image}
+                alt={property.agent.name}
+                className="w-8 h-8 rounded-full object-cover"
+              />
+            ) : (
+              <FaUserAlt className="text-xl" />
+            )}{" "}
+            Agent: <span className="text-indigo-700">{property.agent.name}</span>
           </div>
 
-          {/* Review Section */}
+          {/* Reviews */}
           <div className="mt-10">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold text-gray-800">Reviews</h2>
@@ -124,9 +158,7 @@ const PropertyDetails = () => {
               {property.reviews?.length > 0 ? (
                 property.reviews.map((review, index) => (
                   <div key={index} className="p-4 bg-gray-100 rounded-lg">
-                    <div className="font-semibold text-indigo-700">
-                      {review.user}
-                    </div>
+                    <div className="font-semibold text-indigo-700">{review.user}</div>
                     <p className="text-gray-700">{review.comment}</p>
                   </div>
                 ))
@@ -148,9 +180,7 @@ const PropertyDetails = () => {
             >
               <FaTimes />
             </button>
-            <h3 className="text-xl font-bold mb-4 text-gray-800">
-              Write a Review
-            </h3>
+            <h3 className="text-xl font-bold mb-4 text-gray-800">Write a Review</h3>
             <textarea
               value={newReview}
               onChange={(e) => setNewReview(e.target.value)}
@@ -158,7 +188,10 @@ const PropertyDetails = () => {
               placeholder="Your review here..."
             />
             <button
-              onClick={handleReviewSubmit}
+              onClick={() => {
+                setShowModal(false);
+                setNewReview("");
+              }}
               className="mt-4 w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition"
             >
               <FaPaperPlane className="inline mr-2" />
