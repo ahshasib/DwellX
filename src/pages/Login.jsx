@@ -1,112 +1,117 @@
-import React, { use, useState} from 'react'
+import React, { use, useState } from 'react';
 import { motion } from 'framer-motion';
-
-// import { auth, AuthContext } from './../context/Authcontext/AuthProvider';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { toast, ToastContainer } from 'react-toastify';
 import Swal from 'sweetalert2';
 import { Link, useLocation, useNavigate } from 'react-router';
 import { Helmet } from 'react-helmet-async';
 import { auth, AuthContext } from '../context/AuthProvider';
-
-
-
+import { saveUserDB } from '../api/utils';
 
 const Login = () => {
-  const {signIn} = use(AuthContext)
-  const [error,setError] = useState("")
+  const { signIn } = use(AuthContext);
+  const [error, setError] = useState("");
   const googleProvider = new GoogleAuthProvider();
   const location = useLocation();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const email = e.target.email.value;
     const password = e.target.password.value;
 
-    if (password.length < 6){
+    if (password.length < 6) {
       toast.error("Password length must be min 6 character");
-      return
+      return;
     }
     if (!/[A-Z]/.test(password)) {
       toast.error("Password must include at least one capital letter");
       return;
     }
-    
-    // Check small letter
     if (!/[a-z]/.test(password)) {
       toast.error("Password must include at least one small letter");
       return;
     }
-    
-    else{
-      setError("")
-    }
-  
-    signIn(email,password)
-    .then((userCredential) => {
-      // Signed in 
+
+    try {
+      setError("");
+      const userCredential = await signIn(email, password);
+
+      const userData = {
+        name: userCredential?.user?.displayName,
+        email: userCredential?.user?.email,
+        image: userCredential?.user?.photoURL,
+      }
+
+      await saveUserDB(userData)
+
+
       const user = userCredential.user;
-      Swal.fire({
+
+      await Swal.fire({
         icon: 'success',
         title: 'Login Successful!',
         text: `Welcome back, ${user.email}!`,
         confirmButtonColor: '#3085d6',
         confirmButtonText: 'OK'
-      }).then(() => {
-        navigate(location.state ? location.state : "/");
       });
-      // ...
-    })
-    .catch((error) => {
-      const errorCode = error.code;
-      const errorMessage = error.message;
+
+      navigate(location.state ? location.state : "/");
+
+    } catch (error) {
+      console.error(error);
       Swal.fire({
         icon: "error",
         title: "Oops...",
         text: `invalid-credential`,
         footer: 'Put the correct password'
       });
-    });
-    
+    }
   };
 
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+
+      const userData = {
+        name: result?.user?.displayName,
+        email: result?.user?.email,
+        image: result?.user?.photoURL,
+      }
+      await saveUserDB(userData)
 
 
-  const handleGoogleLogin = () =>{
-    signInWithPopup(auth, googleProvider)
-    .then(result =>{
       const user = result.user;
 
-
-      Swal.fire({
+      await Swal.fire({
         icon: 'success',
         title: 'Login Successful!',
         text: `Welcome back, ${user.email}!`,
         confirmButtonColor: '#3085d6',
         confirmButtonText: 'OK'
-      }).then(() => {
-        navigate(location.state ? location.state : "/");
       });
 
-    })
-    .catch(error =>{
-      const errorCode = error.code;
-      const errorMessage = error.message;
-    })
+      navigate(location.state ? location.state : "/");
+
+    } catch (error) {
+      console.error("Google Login Error:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Google Sign-In Failed",
+        text: error.message || "Something went wrong.",
+      });
     }
-  
-
-
+  };
 
   return (
-    <div className=" min-h-screen bg-gradient-to-br from-blue-100 to-purple-200 flex flex-col-reverse lg:flex-row justify-center items-center p-4">
-       <Helmet>
-    <title>Login| MarathonMate</title>
-  </Helmet>
-     <ToastContainer></ToastContainer>
-       {/* Left side - Form */}
-       <motion.div
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-purple-200 flex flex-col-reverse lg:flex-row justify-center items-center p-4">
+      <Helmet>
+        <title>Login | MarathonMate</title>
+      </Helmet>
+      <ToastContainer />
+
+      {/* Left side - Form */}
+      <motion.div
         initial={{ opacity: 0, x: -40 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5 }}
@@ -160,13 +165,15 @@ const Login = () => {
           />
           Continue with Google
         </motion.button>
-        <p className='font-bold pt-4 text-base text-black text-center'><Link to="/register">Don't have any account? <span className='text-red-500 underline'>Register</span></Link></p>
+
+        <p className='font-bold pt-4 text-base text-black text-center'>
+          <Link to="/register">
+            Don't have any account? <span className='text-red-500 underline'>Register</span>
+          </Link>
+        </p>
       </motion.div>
-
-      {/* Right side - Animation */}
-      
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

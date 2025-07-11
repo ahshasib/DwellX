@@ -1,6 +1,5 @@
 import { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from "react-router";
-import axios from "axios";
 import {
   FaHeart,
   FaMapMarkerAlt,
@@ -12,6 +11,8 @@ import {
 import Loading from "../component/Loading";
 import EmptyState from "../component/EmptyState";
 import { AuthContext } from "../context/AuthProvider";
+import useAxiosSecure from "../hooks/useAxiosSecure";
+
 
 const PropertyDetails = () => {
   const { id } = useParams();
@@ -24,11 +25,13 @@ const PropertyDetails = () => {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  // Load property
+  const axiosSecure = useAxiosSecure(); 
+
+  // ✅ Load property
   useEffect(() => {
     const fetchProperty = async () => {
       try {
-        const res = await axios.get(`${import.meta.env.VITE_API_URL}/property/${id}`);
+        const res = await axiosSecure.get(`/property/${id}`);
         setProperty(res.data);
       } catch (err) {
         console.error("Error fetching property:", err);
@@ -37,14 +40,14 @@ const PropertyDetails = () => {
       }
     };
     fetchProperty();
-  }, [id]);
+  }, [id, axiosSecure]);
 
   // ✅ Check if already wishlisted
   useEffect(() => {
     const checkWishlist = async () => {
       if (!property || !user) return;
       try {
-        const res = await axios.get(`${import.meta.env.VITE_API_URL}/wishlist/check`, {
+        const res = await axiosSecure.get(`/wishlist/check`, {
           params: {
             propertyId: property._id,
             userEmail: user.email,
@@ -60,7 +63,7 @@ const PropertyDetails = () => {
     };
 
     checkWishlist();
-  }, [property, user]);
+  }, [property, user, axiosSecure]);
 
   // ✅ Add to wishlist
   const handleWishlist = async () => {
@@ -75,7 +78,7 @@ const PropertyDetails = () => {
     };
 
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL}/wishlist`, wishlistItem);
+      await axiosSecure.post(`/wishlist`, wishlistItem);
       setWishlist(true);
       navigate("/dashboard/user/wishlist");
     } catch (err) {
@@ -142,7 +145,7 @@ const PropertyDetails = () => {
             Agent: <span className="text-indigo-700">{property.agent.name}</span>
           </div>
 
-          {/* Reviews */}
+          {/* ✅ Reviews */}
           <div className="mt-10">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold text-gray-800">Reviews</h2>
@@ -170,7 +173,7 @@ const PropertyDetails = () => {
         </div>
       </div>
 
-      {/* Review Modal */}
+      {/* ✅ Review Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-xl w-[90%] max-w-md relative">

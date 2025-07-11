@@ -5,11 +5,13 @@ import AddPropertyForm from "../component/AddPropertyForm";
 import axios from "axios";
 import { imageUpload } from "../api/utils";
 import Swal from "sweetalert2";
+import useAxiosSecure from "../hooks/useAxiosSecure";
 
 
 const AddProperty = () => {
   const { user } = useContext(AuthContext);
   const [uploading,setUploading] = useState(false)
+  const axiosSecure = useAxiosSecure(); 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -46,8 +48,8 @@ const AddProperty = () => {
         },
       };
   
-      console.log("Submitted Property:", propertyData);
-      const {data} = await axios.post(`${import.meta.env.VITE_API_URL}/add-properties`,propertyData
+      // console.log("Submitted Property:", propertyData);
+      const {data} = await axiosSecure.post(`/add-properties`,propertyData
       )
 
       Swal.fire({

@@ -1,9 +1,10 @@
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthProvider";
 import axios from "axios";
 import Swal from "sweetalert2";
 import Loading from "../component/Loading";
+import useAxiosSecure from "../hooks/useAxiosSecure";
 
 const MakeOffer = () => {
   const { id } = useParams();
@@ -11,13 +12,15 @@ const MakeOffer = () => {
   const [property, setProperty] = useState(null);
   const [offerAmount, setOfferAmount] = useState("");
   const [buyingDate, setBuyingDate] = useState("");
+  const navigate = useNavigate()
+  const axiosSecure = useAxiosSecure(); 
 
   useEffect(() => {
-    axios
-      .get(`${import.meta.env.VITE_API_URL}/property/${id}`)
+    axiosSecure
+      .get(`/property/${id}`)
       .then((res) => setProperty(res.data))
       .catch((err) => console.error(err));
-  }, [id]);
+  }, [id,axiosSecure]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -64,14 +67,21 @@ const MakeOffer = () => {
     };
 
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL}/offer`, offerData);
+      // 🟢 Offer submit
+      await axiosSecure.post(`/offer`, offerData);
+
+      // 🔴 Remove from wishlist
+      await axiosSecure.delete(`/wishlist/by-property/${property._id}`)
+
       Swal.fire({
         icon: "success",
         title: "Offer Sent!",
-        text: "Your offer has been submitted to the agent.",
+        text: "Your offer has been submitted and wishlist updated.",
       });
+
       setOfferAmount("");
       setBuyingDate("");
+      navigate("/dashboard/user/bought"); // ✅ Navigate to bought page
     } catch (err) {
       console.error(err);
       Swal.fire({
@@ -81,6 +91,7 @@ const MakeOffer = () => {
       });
     }
   };
+
 
   if (!property) return <Loading />;
 

@@ -5,21 +5,22 @@ import { FaUserAlt, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import { motion } from "framer-motion";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router"
+import useAxiosSecure from "../hooks/useAxiosSecure";
 
 const Wishlist = () => {
     const [wishlist, setWishlist] = useState([]);
     const { user } = useContext(AuthContext);
     const navigate = useNavigate();
-
+    const axiosSecure = useAxiosSecure(); 
 
     
     useEffect(() => {
         if (!user?.email) return;
-        axios
-            .get(`${import.meta.env.VITE_API_URL}/wishlist?email=${user.email}`)
+        axiosSecure
+            .get(`/wishlist?email=${user.email}`)
             .then((res) => setWishlist(res.data))
             .catch((err) => console.error(err));
-    }, [user.email]);
+    }, [user.email,axiosSecure]);
 
 
     //remove function
@@ -36,7 +37,7 @@ const Wishlist = () => {
 
         if (result.isConfirmed) {
             try {
-                await axios.delete(`${import.meta.env.VITE_API_URL}/wishlist/${id}`);
+                await axiosSecure.delete(`/wishlist/${id}`);
                 setWishlist((prev) => prev.filter((item) => item._id !== id));
                 Swal.fire('Removed!', 'Property has been removed.', 'success');
             } catch (err) {

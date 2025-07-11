@@ -5,13 +5,19 @@ import AdminDashboard from "../component/AdminDashboard";
 import UserDashboard from "../component/UserDashboard";
 import AgentDashboard from "../component/AgentDashboard";
 import { AuthContext } from "../context/AuthProvider";
+import useRole from "../hooks/useRole";
+import Loading from "../component/Loading";
 
 const DashboardLayout = () => {
     const [isOpen, setIsOpen] = useState(false);
     const location = useLocation();
+    const [role,roleLoading] = useRole()
+    
     const{user} = use(AuthContext)
 
     const toggleSidebar = () => setIsOpen(!isOpen);
+
+    if(roleLoading) return <Loading></Loading>
 
     return (
         <div className="min-h-screen flex flex-col md:flex-row relative">
@@ -58,16 +64,19 @@ const DashboardLayout = () => {
                 <div className="text-center mb-6 mt-5">
                     <img src={user?.photoURL} className="w-12 rounded-full mx-auto mb-2" />
                     <h2 className="text-lg font-semibold text-gray-800">{user?.displayName}</h2>
-                    <button className="mt-2 text-sm text-white bg-indigo-600 px-4 py-1 rounded-full hover:bg-indigo-700 transition">
+                    <NavLink to="/dashboard/user/profile" className="mt-2 text-sm text-white bg-indigo-600 px-4 py-1 rounded-full hover:bg-indigo-700 transition">
                         View Profile
-                    </button>
+                    </NavLink>
                 </div>
 
                 {/* Menu List */}
                 <ul className="space-y-3">
-                    {/* <AdminDashboard /> */}
-                    <UserDashboard />
-                    <AgentDashboard />
+                    {role === 'customer' && <UserDashboard />}
+                    {role === 'seller' && <AgentDashboard />}
+                    {role === 'admin' && <AdminDashboard />}
+                    
+                    
+                    
                 </ul>
             </aside>
 

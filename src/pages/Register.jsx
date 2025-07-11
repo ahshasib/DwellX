@@ -9,7 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Helmet } from 'react-helmet-async';
 import { AuthContext } from '../context/AuthProvider';
 import { updateProfile } from 'firebase/auth';
-import { imageUpload } from '../api/utils';
+import { imageUpload, saveUserDB } from '../api/utils';
 import { useNavigate } from 'react-router';
 
 const Register = () => {
@@ -55,8 +55,16 @@ const Register = () => {
         displayName: name,
         photoURL: imageUrl,
       });
+
+      const userData = {
+        name,
+        email,
+        image:imageUrl,
+      }
+      //added data server db
+      await saveUserDB(userData)
   
-      // ✅ optional: setuser manually if needed
+      // optional: setuser manually if needed
       setuser({
         ...user,
         displayName: name,

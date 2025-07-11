@@ -10,6 +10,8 @@ import DashboardLayout from "../pages/DashboardLayout";
 import AddProperty from "../pages/AddProperty";
 import Wishlist from "../pages/Wishlist";
 import MakeOffer from "../pages/MakeOffer";
+import BoughtProperties from "../pages/BoughtProperties";
+import Profile from "../pages/Profile";
 
 const router = createBrowserRouter([
   {
@@ -31,10 +33,10 @@ const router = createBrowserRouter([
     element: <PrivateRoute><DashboardLayout /></PrivateRoute>,
     children: [
 //       // User routes
-//       { path: 'user/profile', element: <UserRoute><UserProfile /></UserRoute> },
+         { path: 'user/profile', element: <Profile />},
          { path: 'user/wishlist', element: <Wishlist /> },
          { path: 'user/make-offer/:id', element: <MakeOffer /> },
-//       { path: 'user/bought', element: <UserRoute><BoughtProperties /></UserRoute> },
+         { path: 'user/bought', element: <BoughtProperties /> },
 //       { path: 'user/reviews', element: <UserRoute><MyReviews /></UserRoute> },
 //       { path: 'user/make-offer/:id', element: <UserRoute><MakeOffer /></UserRoute> },
 //       { path: 'user/payment/:id', element: <UserRoute><PaymentPage /></UserRoute> },
