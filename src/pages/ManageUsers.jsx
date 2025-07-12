@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import Swal from "sweetalert2";
 import { Helmet } from "react-helmet-async";
 import useAxiosSecure from "../hooks/useAxiosSecure";
@@ -8,12 +7,13 @@ const ManageUsers = () => {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [newRole, setNewRole] = useState("user");
-  const axiosSecure = useAxiosSecure(); 
+  const axiosSecure = useAxiosSecure();
 
   useEffect(() => {
-    axiosSecure.get(`/all-users`)
-      .then(res => setUsers(res.data))
-      .catch(err => console.error(err));
+    axiosSecure
+      .get(`/all-users`)
+      .then((res) => setUsers(res.data))
+      .catch((err) => console.error(err));
   }, [axiosSecure]);
 
   const openModal = (user) => {
@@ -24,26 +24,35 @@ const ManageUsers = () => {
 
   const handleUpdateRole = async () => {
     try {
-      const res = await axiosSecure.patch(`/users/role/${selectedUser._id}`, {
-        newRole: newRole,
+      const res = await axiosSecure.patch(`/user/role/update/${selectedUser.email}`, {
+        role: newRole,
       });
 
       if (res.data.modifiedCount > 0) {
         Swal.fire("Success", `Role changed to ${newRole}`, "success");
-        setUsers(prev =>
-          prev.map(user => user._id === selectedUser._id ? { ...user, role: newRole } : user)
+        setUsers((prev) =>
+          prev.map((user) =>
+            user._id === selectedUser._id
+              ? { ...user, role: newRole, status: "verified" }
+              : user
+          )
         );
       }
       document.getElementById("roleModal").close();
     } catch (error) {
+      console.error(error);
       Swal.fire("Error", "Failed to update role", "error");
     }
   };
 
   return (
     <div className="p-6">
-      <Helmet><title>Manage Users | Dashboard</title></Helmet>
-      <h2 className="text-2xl font-bold mb-6 text-center text-indigo-600">Manage Users</h2>
+      <Helmet>
+        <title>Manage Users | Dashboard</title>
+      </Helmet>
+      <h2 className="text-2xl font-bold mb-6 text-center text-indigo-600">
+        Manage Users
+      </h2>
 
       <div className="overflow-x-auto">
         <table className="table w-full text-sm">
@@ -53,6 +62,7 @@ const ManageUsers = () => {
               <th>Name</th>
               <th>Email</th>
               <th>Current Role</th>
+              <th>Status</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -63,7 +73,14 @@ const ManageUsers = () => {
                 <td>{user.name || "N/A"}</td>
                 <td>{user.email}</td>
                 <td>
-                  <span className="capitalize px-2 py-1 rounded bg-gray-100 text-gray-800">{user.role}</span>
+                  <span className="capitalize px-2 py-1 rounded bg-gray-100 text-gray-800">
+                    {user.role}
+                  </span>
+                </td>
+                <td>
+                  <span className="capitalize px-2 py-1 rounded bg-green-100 text-green-800">
+                    {user.status || "pending"}
+                  </span>
                 </td>
                 <td>
                   <button
@@ -77,7 +94,9 @@ const ManageUsers = () => {
             ))}
             {users.length === 0 && (
               <tr>
-                <td colSpan="5" className="text-center py-4 text-gray-500">No users found.</td>
+                <td colSpan="6" className="text-center py-4 text-gray-500">
+                  No users found.
+                </td>
               </tr>
             )}
           </tbody>
@@ -100,7 +119,13 @@ const ManageUsers = () => {
           <div className="modal-action">
             <form method="dialog" className="flex gap-2">
               <button className="btn btn-outline">Cancel</button>
-              <button type="button" className="btn btn-primary" onClick={handleUpdateRole}>OK</button>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleUpdateRole}
+              >
+                OK
+              </button>
             </form>
           </div>
         </div>
