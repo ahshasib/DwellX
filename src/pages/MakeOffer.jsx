@@ -34,9 +34,8 @@ const MakeOffer = () => {
       });
     }
 
-    const [minPrice, maxPrice] = property.price
-      .split("-")
-      .map((p) => parseInt(p.trim()));
+    const minPrice = property.minPrice;
+const maxPrice = property.maxPrice;
 
     if (amount < minPrice || amount > maxPrice) {
       return Swal.fire({
@@ -95,9 +94,8 @@ const MakeOffer = () => {
 
   if (!property) return <Loading />;
 
-  const [minPrice, maxPrice] = property.price
-    .split("-")
-    .map((p) => parseInt(p.trim()));
+  const minPrice = property.minPrice;
+const maxPrice = property.maxPrice;
 
   return (
     <div className="max-w-3xl mx-auto my-10 bg-white p-8 rounded-lg shadow">

@@ -38,7 +38,8 @@ const AddProperty = () => {
         baths: form.baths.value,
         status: form.status.value,
         sqft: form.sqft.value,
-        price: form.price.value,
+        minPrice: parseInt(form.minPrice.value),
+        maxPrice: parseInt(form.maxPrice.value),
         description: form.description.value,
         image: imageUrl,
         agent: {

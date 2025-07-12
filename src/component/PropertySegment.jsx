@@ -90,7 +90,7 @@ const PropertySegment = () => {
 
                             <div className="flex items-center justify-between pt-4">
                                 <p className="text-lg font-bold text-blue-600 dark:text-blue-400">
-                                ৳ {item.price}
+                                ৳ {item.minPrice}-৳ {item.maxPrice}
                                 </p>
                                 <Link to={`/property/${item._id}`}>
                                 <button className="px-4 py-1.5 text-sm bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full shadow hover:from-blue-700 hover:to-purple-700 transition-all">

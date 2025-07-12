@@ -5,8 +5,8 @@ import { FaMapMarkerAlt, FaHome, FaBed, FaBath, FaRulerCombined, FaAlignLeft } f
 
 
 
-const AddPropertyForm = ({handleSubmit, uploading}) => {
-    const {user} = use(AuthContext)
+const AddPropertyForm = ({ handleSubmit, uploading }) => {
+  const { user } = use(AuthContext)
   return (
     <div className="min-h-screen p-6 flex items-center justify-center ">
       <motion.div
@@ -105,16 +105,30 @@ const AddPropertyForm = ({handleSubmit, uploading}) => {
           </div>
 
           {/* Price */}
-          <div>
-            <label className="block text-gray-700 font-medium mb-1">Price Range</label>
-            <input
-              type="text"
-              name="price"
-              placeholder="৳1000 - ৳20000000"
-              className="w-full border rounded-xl px-4 py-2 bg-white/50"
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-gray-700 font-medium mb-1">Minimum Price</label>
+              <input
+                type="number"
+                name="minPrice"
+                required
+                placeholder="e.g. 1000"
+                min="0"
+                className="w-full border rounded-xl px-4 py-2 bg-white/50"
+              />
+            </div>
+            <div>
+              <label className="block text-gray-700 font-medium mb-1">Maximum Price</label>
+              <input
+                type="number"
+                name="maxPrice"
+                required
+                placeholder="e.g. 2000000"
+                min="0"
+                className="w-full border rounded-xl px-4 py-2 bg-white/50"
+              />
+            </div>
           </div>
-
           {/* Image Upload */}
           <div>
             <label className="block text-gray-700 font-medium mb-1">Upload Image</label>

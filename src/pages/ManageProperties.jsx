@@ -1,23 +1,58 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import Swal from 'sweetalert2';
+import useAxiosSecure from '../hooks/useAxiosSecure';
 
 const ManageProperties = () => {
   const [properties, setProperties] = useState([]);
+  const axiosSecure = useAxiosSecure(); 
 
+  // 1. Fetch All Properties
   useEffect(() => {
-    // Dummy data for design purpose
-    setProperties([
-      {
-        _id: '1',
-        title: 'Luxury Villa',
-        location: 'Gulshan, Dhaka',
-        agentName: 'Hasibul Islam',
-        agentEmail: 'hasibul@example.com',
-        minPrice: 100000,
-        maxPrice: 150000,
-        status: 'pending',
-      },
-    ]);
+    axiosSecure.get('/all-properties')
+      .then(res => setProperties(res.data))
+      .catch(err => console.error(err));
   }, []);
+
+  // 2. Verify Property
+  const handleVerify = async (id) => {
+    try {
+      const res = await axiosSecure.patch(`/verify-property/${id}`);
+      if (res.data.modifiedCount > 0) {
+        Swal.fire("Success", "Property Verified!", "success");
+
+        // Update local state
+        setProperties(prev =>
+          prev.map(p =>
+            p._id === id ? { ...p, status: 'verified' } : p
+          )
+        );
+      }
+    } catch (err) {
+      console.error(err);
+      Swal.fire("Error", "Something went wrong!", "error");
+    }
+  };
+
+  // 3. Reject Property
+  const handleReject = async (id) => {
+    try {
+      const res = await axiosSecure.patch(`/reject-property/${id}`);
+      if (res.data.modifiedCount > 0) {
+        Swal.fire("Rejected", "Property has been rejected.", "info");
+
+        // Update local state
+        setProperties(prev =>
+          prev.map(p =>
+            p._id === id ? { ...p, status: 'rejected' } : p
+          )
+        );
+      }
+    } catch (err) {
+      console.error(err);
+      Swal.fire("Error", "Failed to reject.", "error");
+    }
+  };
 
   return (
     <div className="p-6">
@@ -38,12 +73,12 @@ const ManageProperties = () => {
           <tbody className="text-gray-600 text-sm font-light">
             {properties.map((property) => (
               <tr key={property._id} className="border-b border-gray-200 hover:bg-gray-100">
-                <td className="py-3 px-6 text-left">{property.title}</td>
-                <td className="py-3 px-6 text-left">{property.location}</td>
-                <td className="py-3 px-6 text-left">{property.agentName}</td>
-                <td className="py-3 px-6 text-left">{property.agentEmail}</td>
+                <td className="py-3 px-6 text-left">{property?.title}</td>
+                <td className="py-3 px-6 text-left">{property?.location}</td>
+                <td className="py-3 px-6 text-left">{property?.agent?.name}</td>
+                <td className="py-3 px-6 text-left">{property?.agent?.email}</td>
                 <td className="py-3 px-6 text-left">
-                  ${property.minPrice} - ${property.maxPrice}
+                  ৳{property.minPrice} - ৳{property.maxPrice}
                 </td>
                 <td className="py-3 px-6 text-left capitalize font-semibold">
                   {property.status === 'pending' && <span className="text-yellow-500">Pending</span>}
@@ -53,10 +88,16 @@ const ManageProperties = () => {
                 <td className="py-3 px-6 text-center">
                   {property.status === 'pending' ? (
                     <div className="flex items-center justify-center gap-2">
-                      <button className="bg-green-500 hover:bg-green-600 text-white px-4 py-1 rounded">
+                      <button
+                        onClick={() => handleVerify(property._id)}
+                        className="bg-green-500 hover:bg-green-600 text-white px-4 py-1 rounded"
+                      >
                         Verify
                       </button>
-                      <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded">
+                      <button
+                        onClick={() => handleReject(property._id)}
+                        className="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded"
+                      >
                         Reject
                       </button>
                     </div>
