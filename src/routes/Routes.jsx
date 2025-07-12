@@ -12,6 +12,11 @@ import Wishlist from "../pages/Wishlist";
 import MakeOffer from "../pages/MakeOffer";
 import BoughtProperties from "../pages/BoughtProperties";
 import Profile from "../pages/Profile";
+import AdminRoute from "../context/AdminRoute";
+import ManageUsers from "../pages/ManageUsers";
+import ManageProperties from "../pages/ManageProperties";
+import AgentRoute from "../context/AgentRoute";
+import UserRoute from "../context/UserRoute";
 
 const router = createBrowserRouter([
   {
@@ -33,17 +38,17 @@ const router = createBrowserRouter([
     element: <PrivateRoute><DashboardLayout /></PrivateRoute>,
     children: [
 //       // User routes
-         { path: 'user/profile', element: <Profile />},
-         { path: 'user/wishlist', element: <Wishlist /> },
-         { path: 'user/make-offer/:id', element: <MakeOffer /> },
-         { path: 'user/bought', element: <BoughtProperties /> },
+         { path: 'profile', element: <Profile />},
+         { path: 'user/wishlist', element: <UserRoute><Wishlist /></UserRoute> },
+         { path: 'user/make-offer/:id', element: <UserRoute><MakeOffer /></UserRoute> },
+         { path: 'user/bought', element:<UserRoute><BoughtProperties /></UserRoute> },
 //       { path: 'user/reviews', element: <UserRoute><MyReviews /></UserRoute> },
 //       { path: 'user/make-offer/:id', element: <UserRoute><MakeOffer /></UserRoute> },
 //       { path: 'user/payment/:id', element: <UserRoute><PaymentPage /></UserRoute> },
 
 //       // Agent routes
 //       { path: 'agent/profile', element: <AgentRoute><AgentProfile /></AgentRoute> },
-         { path: 'add-property', element: <AddProperty />},
+         { path: 'agent/add-property', element:<AgentRoute><AddProperty /></AgentRoute>},
 //       { path: 'agent/my-properties', element: <AgentRoute><MyProperties /></AgentRoute> },
 //       { path: 'agent/update/:id', element: <AgentRoute><UpdateProperty /></AgentRoute> },
 //       { path: 'agent/my-sold', element: <AgentRoute><MySold /></AgentRoute> },
@@ -52,8 +57,8 @@ const router = createBrowserRouter([
 
 //       // Admin routes
 //       { path: 'admin/profile', element: <AdminRoute><AdminProfile /></AdminRoute> },
-//       { path: 'admin/manage-properties', element: <AdminRoute><ManageProperties /></AdminRoute> },
-//       { path: 'admin/manage-users', element: <AdminRoute><ManageUsers /></AdminRoute> },
+        { path: 'admin/manage-properties', element: <AdminRoute><ManageProperties /></AdminRoute> },
+        { path: 'admin/manage-users', element: <AdminRoute><ManageUsers /></AdminRoute> },
 //       { path: 'admin/manage-reviews', element: <AdminRoute><ManageReviews /></AdminRoute> },
 //       { path: 'admin/advertise', element: <AdminRoute><AdvertiseProperty /></AdminRoute> },
 //       { path: 'admin/reports', element: <AdminRoute><ReportedProperties /></AdminRoute> },

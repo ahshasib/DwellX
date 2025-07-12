@@ -6,29 +6,35 @@ import useAxiosSecure from "../hooks/useAxiosSecure";
 
 const ManageUsers = () => {
   const [users, setUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [newRole, setNewRole] = useState("user");
   const axiosSecure = useAxiosSecure(); 
+
   useEffect(() => {
-    axiosSecure.get(`/users`)
+    axiosSecure.get(`/all-users`)
       .then(res => setUsers(res.data))
       .catch(err => console.error(err));
   }, [axiosSecure]);
 
-  const handleRoleChange = async (id, currentRole) => {
-    const roles = ["user", "agent", "admin"];
-    const nextRole = roles[(roles.indexOf(currentRole) + 1) % roles.length];
+  const openModal = (user) => {
+    setSelectedUser(user);
+    setNewRole(user.role || "user");
+    document.getElementById("roleModal").showModal();
+  };
 
+  const handleUpdateRole = async () => {
     try {
-      const res = await axiosSecure.patch(`/users/role/${id}`, {
-        newRole: nextRole,
+      const res = await axiosSecure.patch(`/users/role/${selectedUser._id}`, {
+        newRole: newRole,
       });
 
       if (res.data.modifiedCount > 0) {
-        Swal.fire("Success", `Role changed to ${nextRole}`, "success");
-
+        Swal.fire("Success", `Role changed to ${newRole}`, "success");
         setUsers(prev =>
-          prev.map(user => user._id === id ? { ...user, role: nextRole } : user)
+          prev.map(user => user._id === selectedUser._id ? { ...user, role: newRole } : user)
         );
       }
+      document.getElementById("roleModal").close();
     } catch (error) {
       Swal.fire("Error", "Failed to update role", "error");
     }
@@ -54,7 +60,7 @@ const ManageUsers = () => {
             {users.map((user, index) => (
               <tr key={user._id} className="hover:bg-gray-50">
                 <td>{index + 1}</td>
-                <td>{user.displayName || "N/A"}</td>
+                <td>{user.name || "N/A"}</td>
                 <td>{user.email}</td>
                 <td>
                   <span className="capitalize px-2 py-1 rounded bg-gray-100 text-gray-800">{user.role}</span>
@@ -62,7 +68,7 @@ const ManageUsers = () => {
                 <td>
                   <button
                     className="btn btn-sm btn-outline btn-primary"
-                    onClick={() => handleRoleChange(user._id, user.role || "user")}
+                    onClick={() => openModal(user)}
                   >
                     Change Role
                   </button>
@@ -77,6 +83,28 @@ const ManageUsers = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Modal */}
+      <dialog id="roleModal" className="modal">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg mb-4">Change Role</h3>
+          <select
+            className="select select-bordered w-full mb-4"
+            value={newRole}
+            onChange={(e) => setNewRole(e.target.value)}
+          >
+            <option value="user">User</option>
+            <option value="agent">Agent</option>
+            <option value="admin">Admin</option>
+          </select>
+          <div className="modal-action">
+            <form method="dialog" className="flex gap-2">
+              <button className="btn btn-outline">Cancel</button>
+              <button type="button" className="btn btn-primary" onClick={handleUpdateRole}>OK</button>
+            </form>
+          </div>
+        </div>
+      </dialog>
     </div>
   );
 };

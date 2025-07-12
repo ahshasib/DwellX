@@ -3,6 +3,7 @@ import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import CounterSection from "./CounterSection";
 import { FaGlobe, FaStar } from "react-icons/fa";
+import RotatingSparkleButton from "./RotatingSparkleButton";
 
 const Herosection = () => {
     return (
@@ -36,10 +37,18 @@ const Herosection = () => {
                           <FaStar
                          className="text-yellow-400" size={14}/>
                     </span>
+                    <div className="flex justify-between">
+                        
                     <h1 className="text-4xl md:text-7xl font-bold mt-5 mb-4 bg-gradient-to-r from-pink-600 via-indigo-700 to-pink-600 bg-clip-text text-transparent">
                         Find Your Perfect <br />
                         <span className="text-black">Dream Home</span>
+                        
                     </h1>
+                    <div>
+                    <RotatingSparkleButton size={20}></RotatingSparkleButton>
+                    </div>
+                    </div>
+                   
                     <p className="text-lg md:text-xl max-w-2xl mt-4 text-black font-semibold">
                         Discover exceptional properties in prime locations with our{" "}
                         <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
@@ -50,6 +59,7 @@ const Herosection = () => {
                             expert guidance
                         </span>
                         .
+                        <RotatingSparkleButton size={20}></RotatingSparkleButton>
                     </p>
 
                     {/* Category + Search Box */}

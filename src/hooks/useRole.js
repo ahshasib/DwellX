@@ -11,9 +11,18 @@ const useRole = () =>{
     
     useEffect(() =>{
         const fetchUserRole = async() =>{
-            const {data} = await axiosSecure.get (`/user/role/${user?.email}`)
-        setrole(data?.role)
-        setRoleLoading(false)
+            if(!user) return setRoleLoading(false)
+                try{
+                    const {data} = await axiosSecure.get (`/user/role/${user?.email}`)
+                    setrole(data?.role)
+                    
+            
+                }catch (err){
+                    console.log(err)
+                }finally{
+                    setRoleLoading(false)
+                }
+           
         }
         
         fetchUserRole()
