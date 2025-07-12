@@ -6,7 +6,7 @@ import useAxiosSecure from "../hooks/useAxiosSecure";
 const ManageUsers = () => {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [newRole, setNewRole] = useState("user");
+  const [newRole, setNewRole] = useState("customer");
   const axiosSecure = useAxiosSecure();
 
   useEffect(() => {
@@ -18,15 +18,16 @@ const ManageUsers = () => {
 
   const openModal = (user) => {
     setSelectedUser(user);
-    setNewRole(user.role || "user");
+    setNewRole(user.role || "customer");
     document.getElementById("roleModal").showModal();
   };
 
   const handleUpdateRole = async () => {
     try {
-      const res = await axiosSecure.patch(`/user/role/update/${selectedUser.email}`, {
-        role: newRole,
-      });
+      const res = await axiosSecure.patch(
+        `/user/role/update/${selectedUser.email}`,
+        { role: newRole }
+      );
 
       if (res.data.modifiedCount > 0) {
         Swal.fire("Success", `Role changed to ${newRole}`, "success");
@@ -78,8 +79,15 @@ const ManageUsers = () => {
                   </span>
                 </td>
                 <td>
-                  <span className="capitalize px-2 py-1 rounded bg-green-100 text-green-800">
-                    {user.status || "pending"}
+                  <span
+                    className={`capitalize px-2 py-1 rounded 
+                        ${user.status === 'requested'
+                        ? 'bg-yellow-200 text-yellow-800'
+                        : user.status === 'verified'
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-red-100 text-red-800'}`}
+                  >
+                    {user.status || "Unverified"}
                   </span>
                 </td>
                 <td>
@@ -112,8 +120,8 @@ const ManageUsers = () => {
             value={newRole}
             onChange={(e) => setNewRole(e.target.value)}
           >
-            <option value="user">User</option>
-            <option value="agent">Agent</option>
+            <option value="customer">Customer</option>
+            <option value="seller">Seller</option>
             <option value="admin">Admin</option>
           </select>
           <div className="modal-action">

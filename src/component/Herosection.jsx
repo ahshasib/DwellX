@@ -5,6 +5,7 @@ import CounterSection from "./CounterSection";
 import { FaGlobe, FaStar } from "react-icons/fa";
 import RotatingSparkleButton from "./RotatingSparkleButton";
 
+
 const Herosection = () => {
     return (
         <div className="h-screen w-full">
@@ -25,7 +26,7 @@ const Herosection = () => {
                 {/* Main Content */}
                 <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-4">
                     <span className="inline-flex items-center gap-2 py-2 px-4 text-[15px] bg-white border border-indigo-100 text-indigo-500 rounded-full shadow-sm">
-                        <FaGlobe className="text-indigo-500" />
+                    <FaGlobe className="text-indigo-500" />
                         Trusted by 50,000+ families <FaStar
                          className="text-yellow-400" size={14}/>
                          <FaStar
@@ -37,15 +38,18 @@ const Herosection = () => {
                           <FaStar
                          className="text-yellow-400" size={14}/>
                     </span>
-                    <div className="flex justify-between">
+                    <div className="flex justify-between gap-8">
+                    <div className="mt-8">
+                    <RotatingSparkleButton size={24}></RotatingSparkleButton>
+                    </div>
                         
-                    <h1 className="text-4xl md:text-7xl font-bold mt-5 mb-4 bg-gradient-to-r from-pink-600 via-indigo-700 to-pink-600 bg-clip-text text-transparent">
+                    <h1 className="text-4xl md:text-8xl font-bold mt-5 mb-4 bg-gradient-to-r from-pink-600 via-indigo-700 to-pink-600 bg-clip-text text-transparent">
                         Find Your Perfect <br />
                         <span className="text-black">Dream Home</span>
                         
                     </h1>
-                    <div>
-                    <RotatingSparkleButton size={20}></RotatingSparkleButton>
+                    <div className="mt-8">
+                    <RotatingSparkleButton size={24}></RotatingSparkleButton>
                     </div>
                     </div>
                    
@@ -59,7 +63,7 @@ const Herosection = () => {
                             expert guidance
                         </span>
                         .
-                        <RotatingSparkleButton size={20}></RotatingSparkleButton>
+                        
                     </p>
 
                     {/* Category + Search Box */}
@@ -97,9 +101,11 @@ const Herosection = () => {
 
 
                     <div className="mt-10 w-[60%] mx-auto">
+                    
                         <CounterSection></CounterSection>
+                        
                     </div>
-
+                    <RotatingSparkleButton size={24}></RotatingSparkleButton>
                 </div>
 
             </div>

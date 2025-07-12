@@ -17,6 +17,7 @@ import ManageUsers from "../pages/ManageUsers";
 import ManageProperties from "../pages/ManageProperties";
 import AgentRoute from "../context/AgentRoute";
 import UserRoute from "../context/UserRoute";
+import BecomeSeller from "../pages/BecomeSeller";
 
 const router = createBrowserRouter([
   {
@@ -43,6 +44,7 @@ const router = createBrowserRouter([
          { path: 'user/make-offer/:id', element: <UserRoute><MakeOffer /></UserRoute> },
          { path: 'user/bought', element:<UserRoute><BoughtProperties /></UserRoute> },
 //       { path: 'user/reviews', element: <UserRoute><MyReviews /></UserRoute> },
+          { path: 'user/become-seller', element: <UserRoute><BecomeSeller/></UserRoute> },
 //       { path: 'user/make-offer/:id', element: <UserRoute><MakeOffer /></UserRoute> },
 //       { path: 'user/payment/:id', element: <UserRoute><PaymentPage /></UserRoute> },
 
