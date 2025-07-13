@@ -18,6 +18,8 @@ import ManageProperties from "../pages/ManageProperties";
 import AgentRoute from "../context/AgentRoute";
 import UserRoute from "../context/UserRoute";
 import BecomeSeller from "../pages/BecomeSeller";
+import MyAddedProperties from "../pages/MyAddedProperties";
+import RequestedProperties from "../pages/RequestedProperties";
 
 const router = createBrowserRouter([
   {
@@ -51,10 +53,10 @@ const router = createBrowserRouter([
 //       // Agent routes
 //       { path: 'agent/profile', element: <AgentRoute><AgentProfile /></AgentRoute> },
          { path: 'agent/add-property', element:<AgentRoute><AddProperty /></AgentRoute>},
-//       { path: 'agent/my-properties', element: <AgentRoute><MyProperties /></AgentRoute> },
+        { path: 'agent/my-properties', element: <AgentRoute><MyAddedProperties /></AgentRoute> },
 //       { path: 'agent/update/:id', element: <AgentRoute><UpdateProperty /></AgentRoute> },
 //       { path: 'agent/my-sold', element: <AgentRoute><MySold /></AgentRoute> },
-//       { path: 'agent/requests', element: <AgentRoute><RequestedProperties /></AgentRoute> },
+      { path: 'agent/requests', element: <AgentRoute><RequestedProperties /></AgentRoute> },
 //       { path: 'agent/stats', element: <AgentRoute><AgentStats /></AgentRoute> },
 
 //       // Admin routes

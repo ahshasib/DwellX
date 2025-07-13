@@ -58,6 +58,7 @@ const maxPrice = property.maxPrice;
       title: property.title,
       location: property.location,
       agentName: property.agent?.name,
+      agentEmail: property.agent?.email,
       buyerName: user.displayName,
       buyerEmail: user.email,
       offerAmount: amount,
