@@ -20,6 +20,8 @@ import UserRoute from "../context/UserRoute";
 import BecomeSeller from "../pages/BecomeSeller";
 import MyAddedProperties from "../pages/MyAddedProperties";
 import RequestedProperties from "../pages/RequestedProperties";
+import MyReviews from "../pages/MyReviews";
+import AdminManageReviews from "../pages/AdminManageReviews";
 
 const router = createBrowserRouter([
   {
@@ -45,7 +47,7 @@ const router = createBrowserRouter([
          { path: 'user/wishlist', element: <UserRoute><Wishlist /></UserRoute> },
          { path: 'user/make-offer/:id', element: <UserRoute><MakeOffer /></UserRoute> },
          { path: 'user/bought', element:<UserRoute><BoughtProperties /></UserRoute> },
-//       { path: 'user/reviews', element: <UserRoute><MyReviews /></UserRoute> },
+        { path: 'user/reviews', element: <UserRoute><MyReviews /></UserRoute> },
           { path: 'user/become-seller', element: <UserRoute><BecomeSeller/></UserRoute> },
 //       { path: 'user/make-offer/:id', element: <UserRoute><MakeOffer /></UserRoute> },
 //       { path: 'user/payment/:id', element: <UserRoute><PaymentPage /></UserRoute> },
@@ -63,7 +65,7 @@ const router = createBrowserRouter([
 //       { path: 'admin/profile', element: <AdminRoute><AdminProfile /></AdminRoute> },
         { path: 'admin/manage-properties', element: <AdminRoute><ManageProperties /></AdminRoute> },
         { path: 'admin/manage-users', element: <AdminRoute><ManageUsers /></AdminRoute> },
-//       { path: 'admin/manage-reviews', element: <AdminRoute><ManageReviews /></AdminRoute> },
+        { path: 'admin/manage-reviews', element: <AdminRoute><AdminManageReviews/></AdminRoute> },
 //       { path: 'admin/advertise', element: <AdminRoute><AdvertiseProperty /></AdminRoute> },
 //       { path: 'admin/reports', element: <AdminRoute><ReportedProperties /></AdminRoute> },
     ],
