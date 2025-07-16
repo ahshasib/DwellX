@@ -12,11 +12,22 @@ const BoughtProperties = () => {
   const axiosSecure = useAxiosSecure();
   const [selectedOffer, setSelectedOffer] = useState(null);
 
+  const fetchOffers = async () => {
+    setLoading(true); // Optional: show loading again if manually refreshing
+    try {
+      const res = await axiosSecure.get(`/offers?email=${user.email}`);
+      setOffers(res.data);
+    } catch (err) {
+      console.error("Failed to fetch offers:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    axiosSecure.get(`/offers?email=${user.email}`)
-      .then(res => setOffers(res.data))
-      .catch(err => console.error(err))
-      .finally(() => setLoading(false));
+    if (user?.email) {
+      fetchOffers();
+    }
   }, [user.email, axiosSecure]);
 
   const handlePay = (offer) => {
@@ -56,16 +67,23 @@ const BoughtProperties = () => {
               {offer.status.charAt(0).toUpperCase() + offer.status.slice(1)}
             </span>
 
-            {offer.status === "accepted" && (
+            {offer.status === "accepted" ? (
               <button
                 className="mt-2 ml-5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold py-1.5 px-4 rounded-full transition"
                 onClick={() => handlePay(offer)}
               >
                 Pay
               </button>
-            )}
+            ) : offer.status === "paid" ? (
+              <button
+                className="mt-2 ml-5 bg-green-500 text-white text-sm font-semibold py-1.5 px-4 rounded-full transition cursor-not-allowed"
+                disabled
+              >
+                Bought
+              </button>
+            ) : null}
 
-           
+
 
           </div>
 
@@ -75,11 +93,13 @@ const BoughtProperties = () => {
       </div>
 
 
- {/* modal */}
- <PaymentModal 
- offerAmount={selectedOffer?.offerAmount}
- offerId={selectedOffer?._id}
-id="paymentModal" title="Stripe Payment Coming Soon!" />
+      {/* modal */}
+      <PaymentModal
+        offerAmount={selectedOffer?.offerAmount}
+        offerId={selectedOffer?._id}
+        onPaymentSuccess={fetchOffers}
+        sellerEmail = {selectedOffer?.buyerEmail} 
+        id="paymentModal" title="Stripe Payment Coming Soon!" />
 
 
     </div>

@@ -5,7 +5,7 @@ import { loadStripe } from '@stripe/stripe-js';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PK_KEY);
 
-const PaymentModal = ({ id, title,offerAmount,offerId }) => {
+const PaymentModal = ({ id, title,offerAmount,offerId,onPaymentSuccess,sellerEmail }) => {
     const closeModal = () => {
         document.getElementById(id).close();
     };
@@ -19,6 +19,9 @@ const PaymentModal = ({ id, title,offerAmount,offerId }) => {
                     <CheckoutForm 
                     offerAmount={offerAmount}
                     offerId={offerId}
+                    close={closeModal}
+                    onPaymentSuccess = {onPaymentSuccess}
+                    sellerEmail = {sellerEmail}
                     />
                 </Elements>
 

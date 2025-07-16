@@ -6,7 +6,7 @@ import { AuthContext } from '../context/AuthProvider';
 import Swal from 'sweetalert2';
 
 
-const CheckoutForm = ({offerAmount, offerId}) => {
+const CheckoutForm = ({offerAmount, offerId,close,onPaymentSuccess,sellerEmail}) => {
     const {user} = use(AuthContext)
     const axiosSecure = useAxiosSecure()
     const stripe = useStripe();
@@ -83,18 +83,23 @@ const CheckoutForm = ({offerAmount, offerId}) => {
             amount: offerAmount,
             email: user?.email,
             transactionId: result?.paymentIntent?.id,
-            date: new Date()
+            status: 'paid',
+            date: new Date(),
+            sellerEmail: sellerEmail
         };
     
         try{
             const {data} = await axiosSecure.post('/order', orderData)
             if(data?.insertedId){
-                Swal.fire({
+              close(); 
+               Swal.fire({
                     icon: 'success',
                     title: 'Payment Successful!',
                     text: 'Thank you for your purchase.',
                     confirmButtonColor: '#6366F1'
-                });
+                })
+                onPaymentSuccess();
+                
             }
         } catch(err){
             console.error("Order Save Error:", err)

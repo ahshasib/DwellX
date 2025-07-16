@@ -22,6 +22,7 @@ import MyAddedProperties from "../pages/MyAddedProperties";
 import RequestedProperties from "../pages/RequestedProperties";
 import MyReviews from "../pages/MyReviews";
 import AdminManageReviews from "../pages/AdminManageReviews";
+import MySoldProperties from "../pages/MySoldProperties";
 
 const router = createBrowserRouter([
   {
@@ -57,7 +58,7 @@ const router = createBrowserRouter([
          { path: 'agent/add-property', element:<AgentRoute><AddProperty /></AgentRoute>},
         { path: 'agent/my-properties', element: <AgentRoute><MyAddedProperties /></AgentRoute> },
 //       { path: 'agent/update/:id', element: <AgentRoute><UpdateProperty /></AgentRoute> },
-//       { path: 'agent/my-sold', element: <AgentRoute><MySold /></AgentRoute> },
+      { path: 'agent/my-sold', element: <AgentRoute><MySoldProperties /></AgentRoute> },
       { path: 'agent/requests', element: <AgentRoute><RequestedProperties /></AgentRoute> },
 //       { path: 'agent/stats', element: <AgentRoute><AgentStats /></AgentRoute> },
 
