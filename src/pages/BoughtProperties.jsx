@@ -1,21 +1,29 @@
 import { useContext, useEffect, useState } from "react";
-import axios from "axios";
 import { AuthContext } from "../context/AuthProvider";
 import Loading from "../component/Loading";
 import useAxiosSecure from "../hooks/useAxiosSecure";
+
+import PaymentModal from "../component/PaymentModal";
 
 const BoughtProperties = () => {
   const { user } = useContext(AuthContext);
   const [offers, setOffers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const axiosSecure = useAxiosSecure(); 
+  const axiosSecure = useAxiosSecure();
+  const [selectedOffer, setSelectedOffer] = useState(null);
 
   useEffect(() => {
     axiosSecure.get(`/offers?email=${user.email}`)
       .then(res => setOffers(res.data))
       .catch(err => console.error(err))
       .finally(() => setLoading(false));
-  }, [user.email,axiosSecure]);
+  }, [user.email, axiosSecure]);
+
+  const handlePay = (offer) => {
+    setSelectedOffer(offer);
+    document.getElementById("paymentModal").showModal();
+
+  };
 
   if (loading) return <Loading />;
 
@@ -41,15 +49,39 @@ const BoughtProperties = () => {
             <p className="text-gray-600 mb-3">📅 Buying Date: {offer.buyingDate}</p>
 
             <span className={`inline-block px-3 py-1 text-sm font-medium rounded-full 
-              ${offer.status === 'pending' && 'bg-yellow-200 text-yellow-700'}
-              ${offer.status === 'accepted' && 'bg-green-200 text-green-700'}
-              ${offer.status === 'rejected' && 'bg-red-200 text-red-700'}
+              ${offer.status === 'pending' ? 'bg-yellow-200 text-yellow-700 mt-2' : ''}
+              ${offer.status === 'accepted' ? 'bg-green-200 text-green-700 mt-2' : ''}
+              ${offer.status === 'rejected' ? 'bg-red-200 text-red-700 mt-2' : ''}
             `}>
               {offer.status.charAt(0).toUpperCase() + offer.status.slice(1)}
             </span>
+
+            {offer.status === "accepted" && (
+              <button
+                className="mt-2 ml-5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold py-1.5 px-4 rounded-full transition"
+                onClick={() => handlePay(offer)}
+              >
+                Pay
+              </button>
+            )}
+
+           
+
           </div>
+
+
+
         ))}
       </div>
+
+
+ {/* modal */}
+ <PaymentModal 
+ offerAmount={selectedOffer?.offerAmount}
+ offerId={selectedOffer?._id}
+id="paymentModal" title="Stripe Payment Coming Soon!" />
+
+
     </div>
   );
 };
