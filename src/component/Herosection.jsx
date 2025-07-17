@@ -68,16 +68,16 @@ const Herosection = () => {
 
                     {/* Category + Search Box */}
                     <div
-                        className="mt-16 w-full max-w-4xl bg-white rounded-3xl py-10 px-6 shadow-xl z-30"
+                        className="mt-16 border border-blue-50 w-full max-w-4xl bg-white rounded-3xl py-10 px-6 shadow-xl z-30"
 
                     >
                         {/* Category Buttons */}
-                        <div className="flex flex-wrap justify-center gap-3 mb-6">
+                        <div className="flex flex-wrap  justify-center gap-3 mb-6">
                             {["🏢 Apartments", "🏠 Houses", "🏡 Villas", "🛏️ Studios"].map(
                                 (label, i) => (
                                     <span
                                         key={i}
-                                        className="px-4 py-2 bg-white/90 text-black rounded-full shadow hover:bg-white cursor-pointer flex items-center gap-2"
+                                        className="px-4 py-2 border border-blue-50 bg-white/90 text-black rounded-full shadow hover:bg-white cursor-pointer flex items-center gap-2"
                                     >
                                         {label}
                                     </span>
@@ -86,11 +86,11 @@ const Herosection = () => {
                         </div>
 
                         {/* Search Input */}
-                        <div className="flex items-center gap-2 bg-white/90 rounded-full shadow-md px-4 py-2 w-full">
+                        <div className="flex items-center gap-2 border border-gray-200 bg-white/90 rounded-full shadow-md px-4 py-2 w-full">
                             <input
                                 type="text"
                                 placeholder="Search by location or keyword..."
-                                className="flex-1 bg-transparent outline-none text-black px-2 py-2"
+                                className="flex-1  bg-transparent outline-none text-black px-2 py-2"
                             />
                             <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-full font-semibold hover:opacity-90">
                                 Search
