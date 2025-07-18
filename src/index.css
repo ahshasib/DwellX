@@ -47,3 +47,8 @@
 .StripeElementFpx {
   padding: 0;
 }
+.active{
+  background: linear-gradient(to right, rgb(37, 117, 247), rgb(92, 169, 205));
+  color: white;
+  
+}

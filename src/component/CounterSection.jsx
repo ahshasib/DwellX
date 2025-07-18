@@ -42,7 +42,7 @@ const CounterSection = () => {
       {items.map((item, index) => (
         <div
           key={index}
-          className="group bg-white/90 p-6 rounded-xl shadow-xl transition hover:shadow-xl duration-300 hover:scale-105"
+          className="group bg-white border border-indigo-100 p-6 rounded-xl shadow-xl transition hover:shadow-xl duration-300 hover:scale-105"
         >
           <div className="mb-3 flex justify-center">{item.icon}</div>
           <h2 className="text-3xl font-extrabold text-indigo-700">

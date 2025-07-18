@@ -1,5 +1,5 @@
 import React from "react";
-import { Carousel } from "react-responsive-carousel";
+
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import CounterSection from "./CounterSection";
 import { FaGlobe, FaStar } from "react-icons/fa";
@@ -13,11 +13,11 @@ const Herosection = () => {
             {/* Slide 1 */}
             <div className="relative h-screen w-full overflow-hidden">
                 <img
-                    src="./hero1.png"
+                    src="./b16.png"
                     alt="Luxury House"
-                    className="h-screen w-full object-cover"
+                    className="h-screen w-full object-cover "
                 />
-
+                 <div className="absolute inset-0 bg-gray-400 opacity-5 pointer-events-none" />
                 {/* Left & Right Shadows */}
                 <div className="absolute top-0 left-0 h-full w-1/3 bg-gradient-to-r from-pink-200/60 via-transparent to-transparent z-10 pointer-events-none" />
                 <div className="absolute top-0 right-0 h-full w-1/3 bg-gradient-to-l from-blue-200/60 via-transparent to-transparent z-10 pointer-events-none" />
@@ -68,7 +68,7 @@ const Herosection = () => {
 
                     {/* Category + Search Box */}
                     <div
-                        className="mt-16 border border-blue-50 w-full max-w-4xl bg-white rounded-3xl py-10 px-6 shadow-xl z-30"
+                        className="mt-16 border border-blue-100 w-full max-w-4xl bg-white rounded-3xl py-10 px-6 shadow-2xl z-30"
 
                     >
                         {/* Category Buttons */}
