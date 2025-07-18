@@ -34,7 +34,7 @@ const router = createBrowserRouter([
         loader:()=>fetch(`${import.meta.env.VITE_API_URL}/verified-properties`)
        },
       { path: '/allproperties', element: <PrivateRoute><AllProperties /></PrivateRoute> },
-      { path: '/property/:id', element: <PrivateRoute><PropertyDetails /></PrivateRoute> },
+      { path: '/property/:id', element:<PrivateRoute> <UserRoute><PropertyDetails /></UserRoute></PrivateRoute> },
       { path: '/login', element: <Login /> },
       { path: '/register', element: <Register /> },
     ],
@@ -47,6 +47,7 @@ const router = createBrowserRouter([
          { path: 'profile', element: <Profile />},
          { path: 'user/wishlist', element: <UserRoute><Wishlist /></UserRoute> },
          { path: 'user/make-offer/:id', element: <UserRoute><MakeOffer /></UserRoute> },
+         
          { path: 'user/bought', element:<UserRoute><BoughtProperties /></UserRoute> },
         { path: 'user/reviews', element: <UserRoute><MyReviews /></UserRoute> },
           { path: 'user/become-seller', element: <UserRoute><BecomeSeller/></UserRoute> },

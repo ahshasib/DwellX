@@ -10,6 +10,7 @@ import {
   FaShareAlt,
 } from "react-icons/fa";
 import useAxiosSecure from "../hooks/useAxiosSecure";
+import { NavLink } from "react-router";
 
 const AllPropertiesPage = () => {
   const [layout, setLayout] = useState("grid"); // grid or list
@@ -51,6 +52,7 @@ const AllPropertiesPage = () => {
     // প্রথমবার searchQuery ফাঁকা থাকবে, তাই সব প্রপার্টি আসবে
     setSearchQuery("");
   }, []);
+
 
   return (
     <div className="min-h-screen py-12 px-4 md:px-10 bg-gradient-to-br from-purple-50 via-white to-indigo-50 pb-16">
@@ -134,7 +136,8 @@ const AllPropertiesPage = () => {
               : "flex flex-col gap-6"
           }
         >
-          {data.map((item) => (
+          {data.map((item) => ( 
+            
             <div
               key={item._id}
               className={`bg-white rounded-2xl shadow-md overflow-hidden relative flex ${
@@ -210,9 +213,12 @@ const AllPropertiesPage = () => {
                   </div>
                 </div>
 
-                <button className="mt-4 w-full bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white py-4 rounded-xl text-sm hover:from-blue-700 hover:via-purple-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl shadow-blue-500/30">
+               <NavLink to={`/property/${item._id}`}>
+               <button className="mt-4 w-full bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white py-4 rounded-xl text-sm hover:from-blue-700 hover:via-purple-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl shadow-blue-500/30">
                   Detailed information
                 </button>
+
+               </NavLink>
               </div>
             </div>
           ))}
