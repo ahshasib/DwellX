@@ -31,7 +31,7 @@ const router = createBrowserRouter([
     children: [
       { path: '/', 
         element: <Home />,
-        loader:()=>fetch(`${import.meta.env.VITE_API_URL}/verified-properties`)
+        
        },
       { path: '/allproperties', element: <PrivateRoute><AllProperties /></PrivateRoute> },
       { path: '/property/:id', element:<PrivateRoute> <UserRoute><PropertyDetails /></UserRoute></PrivateRoute> },

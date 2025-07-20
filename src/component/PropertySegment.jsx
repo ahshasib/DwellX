@@ -7,20 +7,35 @@ import {
   FaMapMarkerAlt,
   FaArrowRight,
 } from "react-icons/fa";
-import { Link, useLoaderData } from "react-router";
-import EmptyState from './EmptyState';
+import { Link } from "react-router";
+import { useQuery } from "@tanstack/react-query";
+import EmptyState from "./EmptyState";
 
 const categories = ["All Properties", "Apartments", "Villas", "Houses"];
 
+const fetchProperties = async () => {
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/verified-properties`);
+  if (!res.ok) {
+    throw new Error("Failed to fetch properties");
+  }
+  return res.json();
+};
+
 const PropertySegment = () => {
-  const allProperties = useLoaderData();
+  const { data: allProperties = [], isLoading: isDataLoading, error } = useQuery({
+    queryKey: ["verified-properties"],
+    queryFn: fetchProperties,
+  });
+
   const [active, setActive] = useState("All Properties");
   const [visibleProperties, setVisibleProperties] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   // Initial load
   useEffect(() => {
-    setVisibleProperties(allProperties.slice(0, 6));
+    if (allProperties.length > 0) {
+      setVisibleProperties(allProperties.slice(0, 6));
+    }
   }, [allProperties]);
 
   // Handle category change with loading simulation
@@ -42,6 +57,18 @@ const PropertySegment = () => {
 
     return () => clearTimeout(timeout);
   }, [active, allProperties]);
+
+  if (isDataLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return <div className="text-center text-red-500">Failed to load properties.</div>;
+  }
 
   return (
     <div className="px-6 py-10 max-w-7xl mx-auto dark:bg-gray-900">

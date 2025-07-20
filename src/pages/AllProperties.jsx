@@ -11,7 +11,8 @@ import {
 } from "react-icons/fa";
 import useAxiosSecure from "../hooks/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
-import { NavLink } from "react-router"; // fixed import
+import { NavLink } from "react-router"; 
+import EmptyState from "../component/EmptyState";
 
 const AllPropertiesPage = () => {
   const [layout, setLayout] = useState("grid");
@@ -30,7 +31,7 @@ const AllPropertiesPage = () => {
   } = useQuery({
     queryKey: ["properties", searchQuery, sort],
     queryFn: async () => {
-      const res = await axiosSecure.get("/verified-properties", {
+      const res = await axiosSecure.get("/verified-properties-all", {
         params: {
           search: searchQuery || undefined,
           sort: sort || undefined,
@@ -46,16 +47,20 @@ const AllPropertiesPage = () => {
   };
 
   return (
-    <div className="min-h-screen py-12 px-4 md:px-10 bg-gradient-to-br from-purple-50 via-white to-indigo-50 pb-16">
+    <div className="min-h-screen py-12 px-4 mt-0 md:-mt-5 md:px-10 bg-gradient-to-br from-purple-50 via-white to-indigo-50 pb-16">
+     <div className="text-center py-2 md:py-8">
+     <h1 className="font-bold text-xl md:text-5xl">Find Your Perfect Property</h1>
+     <p className=" text-md md:2xl text-gray-600 py-2 md:py-5">Discover a curated collection of premium properties</p>
+     </div>
       <div className="max-w-7xl mx-auto">
         {/* Filter Bar */}
-        <div className="flex flex-col md:flex-row items-center justify-between border border-indigo-100 gap-4 mb-10 p-6 rounded-2xl shadow-lg bg-info-100">
-          <div className="flex items-center gap-3 bg-white shadow px-4 py-2 rounded-full w-full md:w-[50%] relative">
+        <div className="flex flex-col md:flex-row items-center justify-between bg-white/100 border border-indigo-100 gap-4 mb-10 p-6 rounded-2xl shadow-lg bg-info-100">
+          <div className="flex items-center gap-3 border border-gray-200 bg-white/10 shadow px-4  rounded-lg w-full md:w-[80%] relative">
             <FaSearch className="text-gray-500" />
             <input
               type="text"
-              placeholder="Search by location or title..."
-              className="outline-none flex-1 text-sm"
+              placeholder="Search by location..."
+              className="outline-none flex-1 text-sm py-3 bg-transparent"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               onKeyDown={(e) => {
@@ -66,7 +71,7 @@ const AllPropertiesPage = () => {
             />
             <button
               onClick={handleSearch}
-              className="absolute right-1 top-1/2 -translate-y-1/2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded-full text-sm"
+              className="absolute right-1 top-1/2 -translate-y-1/2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
               aria-label="Search"
             >
               Search
@@ -121,9 +126,7 @@ const AllPropertiesPage = () => {
 
         {/* No Data */}
         {!isLoading && data.length === 0 && (
-          <p className="text-center py-20 text-gray-500 font-semibold text-xl">
-            No properties found.
-          </p>
+          <EmptyState></EmptyState>
         )}
 
         {/* Property Cards */}

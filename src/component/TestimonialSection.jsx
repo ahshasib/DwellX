@@ -1,30 +1,37 @@
-import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { FaStar, FaCheckCircle, FaQuoteRight, FaQuoteLeft, FaArrowRight, FaHeart } from "react-icons/fa";
+import {
+  FaStar,
+  FaCheckCircle,
+  FaQuoteRight,
+  FaQuoteLeft,
+  FaArrowRight,
+  FaHeart,
+} from "react-icons/fa";
+import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "../hooks/useAxiosSecure";
 import Loading from "../component/Loading";
 import EmptyState from "../component/EmptyState";
 
+const fetchLatestReviews = async (axiosSecure) => {
+  const res = await axiosSecure.get("/reviews/latest");
+  return res.data;
+};
+
 const TestimonialSection = () => {
-  const [reviews, setReviews] = useState([]);
-  const [loading, setLoading] = useState(true);
   const axiosSecure = useAxiosSecure();
 
-  useEffect(() => {
-    const fetchLatestReviews = async () => {
-      try {
-        const res = await axiosSecure.get("/reviews/latest");
-        setReviews(res.data);
-      } catch (err) {
-        console.error("Failed to load reviews:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchLatestReviews();
-  }, [axiosSecure]);
+  const {
+    data: reviews = [],
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["latest-reviews"],
+    queryFn: () => fetchLatestReviews(axiosSecure),
+  });
 
-  if (loading) return <Loading />;
+  if (isLoading) return <Loading />;
+  if (isError) return <EmptyState message="Failed to load reviews!" />;
   if (!reviews.length) return <EmptyState message="No reviews available yet!" />;
 
   return (

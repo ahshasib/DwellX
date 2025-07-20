@@ -1,20 +1,20 @@
 import { useState } from "react";
-import { imageUpload } from "../api/utils"; // ✅ imgbb uploader function
+import { imageUpload } from "../api/utils";
 import useAxiosSecure from "../hooks/useAxiosSecure";
 import Swal from "sweetalert2";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-const UpdateModal = ({ property, closeModal, refetch }) => {
+const UpdateModal = ({ property, closeModal }) => {
   const axiosSecure = useAxiosSecure();
+  const queryClient = useQueryClient();
 
   const [title, setTitle] = useState(property.title);
   const [minPrice, setMinPrice] = useState(property.minPrice);
   const [maxPrice, setMaxPrice] = useState(property.maxPrice);
   const [image, setImage] = useState(null);
 
-  const handleUpdate = async (e) => {
-    e.preventDefault();
-
-    try {
+  const { mutate: updateProperty, isLoading } = useMutation({
+    mutationFn: async () => {
       let updatedImage = property.image;
 
       if (image) {
@@ -30,14 +30,25 @@ const UpdateModal = ({ property, closeModal, refetch }) => {
 
       const res = await axiosSecure.put(`/my-property/${property._id}`, updatedData);
       if (res.data.modifiedCount > 0) {
-        Swal.fire("Updated!", "Property updated successfully", "success");
-        refetch && refetch();
-        closeModal();
+        return true;
+      } else {
+        throw new Error("No modification made");
       }
-    } catch (err) {
-      console.error(err);
+    },
+    onSuccess: () => {
+      Swal.fire("Updated!", "Property updated successfully", "success");
+      queryClient.invalidateQueries({ queryKey: ["my-properties"] });
+      closeModal();
+    },
+    onError: (error) => {
+      console.error(error);
       Swal.fire("Error", "Update failed", "error");
-    }
+    },
+  });
+
+  const handleUpdate = (e) => {
+    e.preventDefault();
+    updateProperty();
   };
 
   return (
@@ -45,7 +56,7 @@ const UpdateModal = ({ property, closeModal, refetch }) => {
       <div className="bg-white p-6 rounded-xl w-full max-w-lg relative">
         <button onClick={closeModal} className="absolute top-2 right-2 text-red-500 text-xl">✕</button>
 
-        <h2 className="text-xl font-semibold mb-4 text-indigo-600">✏️ Update Property</h2>
+        <h2 className="text-xl font-semibold mb-4 text-indigo-600">Update Property</h2>
 
         <form onSubmit={handleUpdate} className="space-y-4">
           <input
@@ -81,7 +92,9 @@ const UpdateModal = ({ property, closeModal, refetch }) => {
             className="file-input file-input-bordered w-full"
           />
 
-          <button type="submit" className="btn btn-primary w-full">Update</button>
+          <button type="submit" className="btn btn-primary w-full" disabled={isLoading}>
+            {isLoading ? "Updating..." : "Update"}
+          </button>
         </form>
       </div>
     </div>
