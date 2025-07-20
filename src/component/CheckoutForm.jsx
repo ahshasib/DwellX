@@ -90,18 +90,21 @@ const CheckoutForm = ({offerAmount, offerId,close,onPaymentSuccess,sellerEmail})
     
         try{
             const {data} = await axiosSecure.post('/order', orderData)
-            if(data?.insertedId){
+           
+            if (data?.result?.insertedId) {
+             
               close(); 
-               Swal.fire({
-                    icon: 'success',
-                    title: 'Payment Successful!',
-                    text: 'Thank you for your purchase.',
-                    confirmButtonColor: '#6366F1'
-                })
-                onPaymentSuccess();
-                
+              Swal.fire({
+                icon: 'success',
+                title: 'Payment Successful!',
+                text: 'Thank you for your purchase.',
+                confirmButtonColor: '#6366F1'
+              });
+              onPaymentSuccess();
+            } else {
+              console.warn("Order not saved, insertedId missing");
             }
-        } catch(err){
+          } catch(err){
             console.error("Order Save Error:", err)
         } finally {
             setProcessing(false)

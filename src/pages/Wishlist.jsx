@@ -1,29 +1,43 @@
-import { useEffect, useState, useContext } from "react";
-import axios from "axios";
+import { useContext } from "react";
 import { AuthContext } from "../context/AuthProvider";
 import { FaUserAlt, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import { motion } from "framer-motion";
 import Swal from "sweetalert2";
-import { useNavigate } from "react-router"
+import { useNavigate } from "react-router";
 import useAxiosSecure from "../hooks/useAxiosSecure";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const Wishlist = () => {
-    const [wishlist, setWishlist] = useState([]);
     const { user } = useContext(AuthContext);
     const navigate = useNavigate();
-    const axiosSecure = useAxiosSecure(); 
+    const axiosSecure = useAxiosSecure();
+    const queryClient = useQueryClient();
 
-    
-    useEffect(() => {
-        if (!user?.email) return;
-        axiosSecure
-            .get(`/wishlist?email=${user.email}`)
-            .then((res) => setWishlist(res.data))
-            .catch((err) => console.error(err));
-    }, [user.email,axiosSecure]);
+    // ✅ Wishlist fetch করার জন্য query use
+    const { data: wishlist = [], isLoading } = useQuery({
+        queryKey: ['wishlist', user?.email],
+        enabled: !!user?.email,
+        queryFn: async () => {
+            const res = await axiosSecure.get(`/wishlist?email=${user.email}`);
+            return res.data;
+        }
+    });
 
+    // ✅ Remove function-এর জন্য mutation use
+    const removeMutation = useMutation({
+        mutationFn: async (id) => {
+            await axiosSecure.delete(`/wishlist/${id}`);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['wishlist', user?.email] });
+            Swal.fire('Removed!', 'Property has been removed.', 'success');
+        },
+        onError: () => {
+            Swal.fire('Error', 'Failed to remove item.', 'error');
+        }
+    });
 
-    //remove function
+    // Remove handle function
     const handleRemove = async (id) => {
         const result = await Swal.fire({
             title: 'Are you sure?',
@@ -36,20 +50,16 @@ const Wishlist = () => {
         });
 
         if (result.isConfirmed) {
-            try {
-                await axiosSecure.delete(`/wishlist/${id}`);
-                setWishlist((prev) => prev.filter((item) => item._id !== id));
-                Swal.fire('Removed!', 'Property has been removed.', 'success');
-            } catch (err) {
-                console.error("Remove failed", err);
-                Swal.fire('Error', 'Failed to remove item.', 'error');
-            }
+            removeMutation.mutate(id);
         }
     };
 
+    if (isLoading) {
+        return <p className="text-center text-lg">Loading wishlist...</p>;
+    }
 
     return (
-        <div className="p-6 min-h-screen bg-gradient-to-br ">
+        <div className="p-6 min-h-screen bg-gradient-to-br">
             <h2 className="text-3xl font-extrabold text-center text-indigo-700 mb-8">
                 ❤️ My Wishlist
             </h2>
@@ -81,9 +91,9 @@ const Wishlist = () => {
                                 </p>
 
                                 <div className="flex items-center gap-3">
-                                    {item.agent?.image ? (
+                                    {item.agentImage ? (
                                         <img
-                                            src={item.agent.image}
+                                            src={item.agentImage}
                                             alt="agent"
                                             className="w-9 h-9 rounded-full object-cover border-2 border-indigo-400"
                                         />
@@ -93,12 +103,12 @@ const Wishlist = () => {
 
                                     <div>
                                         <p className="text-sm text-gray-700">
-                                            Agent: <span className="font-medium">{item.agent?.name || "Unknown"}</span>
+                                            Agent: <span className="font-medium">{item.agentName || "Unknown"}</span>
                                         </p>
                                         <p className="text-xs flex items-center gap-1 text-green-500">
-                                            {item.agent?.verified ? (
+                                            {item.status ? (
                                                 <>
-                                                    <FaCheckCircle /> Verified Agent
+                                                    <FaCheckCircle /> Verified property
                                                 </>
                                             ) : (
                                                 <span className="flex items-center gap-1 text-red-500">
@@ -110,7 +120,7 @@ const Wishlist = () => {
                                 </div>
 
                                 <p className="text-indigo-700 font-semibold text-lg">
-                                    💰 {item.price}
+                                    💰 ${item.minPrice} - ${item.maxPrice}
                                 </p>
 
                                 <div className="flex gap-3 mt-4">

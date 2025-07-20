@@ -1,58 +1,58 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import Swal from 'sweetalert2';
-import useAxiosSecure from '../hooks/useAxiosSecure';
+import React from "react";
+import Swal from "sweetalert2";
+import useAxiosSecure from "../hooks/useAxiosSecure";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const ManageProperties = () => {
-  const [properties, setProperties] = useState([]);
-  const axiosSecure = useAxiosSecure(); 
+  const axiosSecure = useAxiosSecure();
+  const queryClient = useQueryClient();
 
-  // 1. Fetch All Properties
-  useEffect(() => {
-    axiosSecure.get('/all-properties')
-      .then(res => setProperties(res.data))
-      .catch(err => console.error(err));
-  }, []);
+  // Fetch All Properties using useQuery
+  const { data: properties = [], isLoading } = useQuery({
+    queryKey: ["all-properties"],
+    queryFn: async () => {
+      const res = await axiosSecure.get("/all-properties");
+      return res.data;
+    },
+  });
 
-  // 2. Verify Property
-  const handleVerify = async (id) => {
-    try {
+  // Mutation: Verify Property
+  const verifyMutation = useMutation({
+    mutationFn: async (id) => {
       const res = await axiosSecure.patch(`/verify-property/${id}`);
-      if (res.data.modifiedCount > 0) {
+      return res.data;
+    },
+    onSuccess: (data, id) => {
+      if (data.modifiedCount > 0) {
         Swal.fire("Success", "Property Verified!", "success");
-
-        // Update local state
-        setProperties(prev =>
-          prev.map(p =>
-            p._id === id ? { ...p, status: 'verified' } : p
-          )
-        );
+        queryClient.invalidateQueries(["all-properties"]);
       }
-    } catch (err) {
-      console.error(err);
+    },
+    onError: () => {
       Swal.fire("Error", "Something went wrong!", "error");
-    }
-  };
+    },
+  });
 
-  // 3. Reject Property
-  const handleReject = async (id) => {
-    try {
+  // ✅ Mutation: Reject Property
+  const rejectMutation = useMutation({
+    mutationFn: async (id) => {
       const res = await axiosSecure.patch(`/reject-property/${id}`);
-      if (res.data.modifiedCount > 0) {
+      return res.data;
+    },
+    onSuccess: (data, id) => {
+      if (data.modifiedCount > 0) {
         Swal.fire("Rejected", "Property has been rejected.", "info");
-
-        // Update local state
-        setProperties(prev =>
-          prev.map(p =>
-            p._id === id ? { ...p, status: 'rejected' } : p
-          )
-        );
+        queryClient.invalidateQueries(["all-properties"]);
       }
-    } catch (err) {
-      console.error(err);
+    },
+    onError: () => {
       Swal.fire("Error", "Failed to reject.", "error");
-    }
-  };
+    },
+  });
+
+  if (isLoading) {
+    return <div className="text-center mt-10 text-lg">Loading properties...</div>;
+  }
 
   return (
     <div className="p-6">
@@ -81,24 +81,32 @@ const ManageProperties = () => {
                   ৳{property.minPrice} - ৳{property.maxPrice}
                 </td>
                 <td className="py-3 px-6 text-left capitalize font-semibold">
-                  {property.status === 'pending' && <span className="text-yellow-500">Pending</span>}
-                  {property.status === 'verified' && <span className="text-green-600">Verified</span>}
-                  {property.status === 'rejected' && <span className="text-red-500">Rejected</span>}
+                  {property.status === "pending" && (
+                    <span className="text-yellow-500">Pending</span>
+                  )}
+                  {property.status === "verified" && (
+                    <span className="text-green-600">Verified</span>
+                  )}
+                  {property.status === "rejected" && (
+                    <span className="text-red-500">Rejected</span>
+                  )}
                 </td>
                 <td className="py-3 px-6 text-center">
-                  {property.status === 'pending' ? (
+                  {property.status === "pending" ? (
                     <div className="flex items-center justify-center gap-2">
                       <button
-                        onClick={() => handleVerify(property._id)}
+                        onClick={() => verifyMutation.mutate(property._id)}
                         className="bg-green-500 hover:bg-green-600 text-white px-4 py-1 rounded"
+                        disabled={verifyMutation.isLoading}
                       >
-                        Verify
+                        {verifyMutation.isLoading ? "Verifying..." : "Verify"}
                       </button>
                       <button
-                        onClick={() => handleReject(property._id)}
+                        onClick={() => rejectMutation.mutate(property._id)}
                         className="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded"
+                        disabled={rejectMutation.isLoading}
                       >
-                        Reject
+                        {rejectMutation.isLoading ? "Rejecting..." : "Reject"}
                       </button>
                     </div>
                   ) : (

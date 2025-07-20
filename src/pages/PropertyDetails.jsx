@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import {
   FaHeart,
@@ -8,64 +8,64 @@ import {
   FaTimes,
   FaPaperPlane,
 } from "react-icons/fa";
-import Loading from "../component/Loading";
-import EmptyState from "../component/EmptyState";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { AuthContext } from "../context/AuthProvider";
 import useAxiosSecure from "../hooks/useAxiosSecure";
+import Loading from "../component/Loading";
+import EmptyState from "../component/EmptyState";
 
 const PropertyDetails = () => {
   const { id } = useParams();
-  const [property, setProperty] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [wishlist, setWishlist] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [newReview, setNewReview] = useState("");
-  const [reviews, setReviews] = useState([]);
-
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const axiosSecure = useAxiosSecure();
+  const queryClient = useQueryClient();
 
-  // Load property
-  useEffect(() => {
-    const fetchProperty = async () => {
-      try {
-        const res = await axiosSecure.get(`/property/${id}`);
-        setProperty(res.data);
-      } catch (err) {
-        console.error("Error fetching property:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProperty();
-  }, [id, axiosSecure]);
+  const [wishlist, setWishlist] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [newReview, setNewReview] = useState("");
 
-  // Load reviews
-  useEffect(() => {
-    const fetchReviews = async () => {
-      try {
-        const res = await axiosSecure.get(`/reviews/by-property/${id}`);
-        setReviews(res.data);
-      } catch (err) {
-        console.error("Failed to load reviews:", err);
-      }
-    };
-    fetchReviews();
-  }, [id, axiosSecure]);
+  // Fetch property data
+  const {
+    data: property,
+    isLoading: propertyLoading,
+    isError: propertyError,
+  } = useQuery({
+    queryKey: ["property", id],
+    queryFn: async () => {
+      const res = await axiosSecure.get(`/property/${id}`);
+      return res.data;
+    },
+    enabled: !!id,
+  });
 
-  // Check wishlist
+  // Fetch reviews
+  const {
+    data: reviews = [],
+    isLoading: reviewsLoading,
+    isError: reviewsError,
+  } = useQuery({
+    queryKey: ["reviews", id],
+    queryFn: async () => {
+      const res = await axiosSecure.get(`/reviews/by-property/${id}`);
+      return res.data;
+    },
+    enabled: !!id,
+  });
+
+  // Check wishlist status
   useEffect(() => {
+    if (!property || !user) return;
+
     const checkWishlist = async () => {
-      if (!property || !user) return;
       try {
-        const res = await axiosSecure.get(`/wishlist/check`, {
+        const res = await axiosSecure.get("/wishlist/check", {
           params: {
             propertyId: property._id,
             userEmail: user.email,
           },
         });
-        if (res.data.exists) setWishlist(true);
+        setWishlist(res.data.exists);
       } catch (err) {
         console.error("Wishlist check failed:", err);
       }
@@ -73,58 +73,69 @@ const PropertyDetails = () => {
     checkWishlist();
   }, [property, user, axiosSecure]);
 
-  // Add to wishlist
-  const handleWishlist = async () => {
-    const wishlistItem = {
-      propertyId: property._id,
-      title: property.title,
-      image: property.image,
-      price: property.price,
-      location: property.location,
-      userEmail: user.email,
-      addedAt: new Date(),
-    };
-
-    try {
-      await axiosSecure.post(`/wishlist`, wishlistItem);
+  // Add to wishlist mutation
+  const addWishlistMutation = useMutation({
+    mutationFn: async () => {
+      const wishlistItem = {
+        propertyId: property._id,
+        title: property.title,
+        image: property.image,
+        location: property.location,
+        status: property.status,
+        maxPrice: property.maxPrice,
+        minPrice: property.minPrice,
+        userEmail: user.email,
+        addedAt: new Date(),
+        agentName: property.agent?.name || "",
+        agentEmail: property.agent?.email || "",
+        agentImage: property.agent?.image || "",
+      };
+      return axiosSecure.post("/wishlist", wishlistItem);
+    },
+    onSuccess: () => {
       setWishlist(true);
       navigate("/dashboard/user/wishlist");
-    } catch (err) {
-      if (err.response?.status === 409) {
+    },
+    onError: (error) => {
+      if (error.response?.status === 409) {
         setWishlist(true);
       } else {
-        console.error("Wishlist failed:", err);
+        console.error("Wishlist failed:", error);
       }
-    }
-  };
+    },
+  });
 
-  // Submit review
-  const handleReviewSubmit = async () => {
-    if (!newReview.trim()) return;
-
-    const reviewData = {
-      propertyId: property._id,
-      propertyTitle: property.title,
-      agentName: property.agent.name, 
-      reviewerEmail: user.email,
-      reviewerName: user.displayName,
-      reviewerImage: user.photoURL || "",
-      comment: newReview,
-      createdAt: new Date(),
-    };
-
-    try {
+  // Submit review mutation
+  const submitReviewMutation = useMutation({
+    mutationFn: async () => {
+      const reviewData = {
+        propertyId: property._id,
+        propertyTitle: property.title,
+        agentName: property.agent?.name || "",
+        reviewerEmail: user.email,
+        reviewerName: user.displayName,
+        reviewerImage: user.photoURL || "",
+        comment: newReview,
+        createdAt: new Date(),
+      };
       const res = await axiosSecure.post("/reviews", reviewData);
-      setReviews([res.data, ...reviews]); // add to top
+      return res.data;
+    },
+    onSuccess: (newReviewData) => {
+      queryClient.setQueryData(["reviews", id], (old = []) => [
+        newReviewData,
+        ...old,
+      ]);
       setNewReview("");
       setShowModal(false);
-    } catch (err) {
-      console.error("Review submit failed:", err);
-    }
-  };
+    },
+    onError: (err) => {
+      console.error("Review submission error:", err);
+    },
+  });
 
-  if (loading) return <Loading />;
-  if (!property) return <EmptyState />;
+  if (propertyLoading || reviewsLoading) return <Loading />;
+  if (propertyError || reviewsError) return <EmptyState />;
 
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4 md:px-20">
@@ -141,16 +152,19 @@ const PropertyDetails = () => {
               {property.title}
             </h1>
             <button
-              onClick={handleWishlist}
-              disabled={wishlist}
-              className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition ${
-                wishlist
-                  ? "bg-red-100 text-red-600 cursor-not-allowed"
-                  : "bg-indigo-100 text-indigo-600 hover:bg-indigo-200"
-              }`}
+              onClick={() => addWishlistMutation.mutate()}
+              disabled={wishlist || addWishlistMutation.isLoading}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition ${wishlist
+                ? "bg-red-100 text-red-600 cursor-not-allowed"
+                : "bg-indigo-100 text-indigo-600 hover:bg-indigo-200"
+                }`}
             >
               <FaHeart />
-              {wishlist ? "Wishlisted" : "Add to Wishlist"}
+              {wishlist
+                ? "Wishlisted"
+                : addWishlistMutation.isLoading
+                  ? "Adding..."
+                  : "Add to Wishlist"}
             </button>
           </div>
 
@@ -163,7 +177,10 @@ const PropertyDetails = () => {
           <div className="text-xl font-semibold text-indigo-700 mb-2">
             Price Range:
           </div>
-          <p className="mb-4">{property.price}</p>
+          <p className="mb-4">
+            ${property.minPrice} -
+            ${property.maxPrice}
+          </p>
 
           <div className="text-lg font-medium flex items-center gap-2 text-gray-600">
             {property.agent?.image ? (
@@ -175,7 +192,8 @@ const PropertyDetails = () => {
             ) : (
               <FaUserAlt className="text-xl" />
             )}
-            Agent: <span className="text-indigo-700">{property.agent.name}</span>
+            Agent:{" "}
+            <span className="text-indigo-700">{property.agent?.name}</span>
           </div>
 
           {/* Reviews */}
@@ -229,7 +247,9 @@ const PropertyDetails = () => {
             >
               <FaTimes />
             </button>
-            <h3 className="text-xl font-bold mb-4 text-gray-800">Write a Review</h3>
+            <h3 className="text-xl font-bold mb-4 text-gray-800">
+              Write a Review
+            </h3>
             <textarea
               value={newReview}
               onChange={(e) => setNewReview(e.target.value)}
@@ -237,11 +257,14 @@ const PropertyDetails = () => {
               placeholder="Your review here..."
             />
             <button
-              onClick={handleReviewSubmit}
+              onClick={() => submitReviewMutation.mutate()}
+              disabled={submitReviewMutation.isLoading}
               className="mt-4 w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition"
             >
               <FaPaperPlane className="inline mr-2" />
-              Submit Review
+              {submitReviewMutation.isLoading
+                ? "Submitting..."
+                : "Submit Review"}
             </button>
           </div>
         </div>

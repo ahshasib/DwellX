@@ -1,26 +1,28 @@
 import { useNavigate, useParams } from "react-router";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthProvider";
-import axios from "axios";
 import Swal from "sweetalert2";
 import Loading from "../component/Loading";
 import useAxiosSecure from "../hooks/useAxiosSecure";
+import { useQuery } from "@tanstack/react-query";
 
 const MakeOffer = () => {
   const { id } = useParams();
   const { user } = useContext(AuthContext);
-  const [property, setProperty] = useState(null);
   const [offerAmount, setOfferAmount] = useState("");
   const [buyingDate, setBuyingDate] = useState("");
-  const navigate = useNavigate()
-  const axiosSecure = useAxiosSecure(); 
+  const navigate = useNavigate();
+  const axiosSecure = useAxiosSecure();
 
-  useEffect(() => {
-    axiosSecure
-      .get(`/property/${id}`)
-      .then((res) => setProperty(res.data))
-      .catch((err) => console.error(err));
-  }, [id,axiosSecure]);
+  // TanStack Query দিয়ে property data fetch
+  const { data: property, isLoading } = useQuery({
+    queryKey: ["property", id],
+    enabled: !!id,
+    queryFn: async () => {
+      const res = await axiosSecure.get(`/property/${id}`);
+      return res.data;
+    },
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,7 +37,7 @@ const MakeOffer = () => {
     }
 
     const minPrice = property.minPrice;
-const maxPrice = property.maxPrice;
+    const maxPrice = property.maxPrice;
 
     if (amount < minPrice || amount > maxPrice) {
       return Swal.fire({
@@ -67,11 +69,11 @@ const maxPrice = property.maxPrice;
     };
 
     try {
-      // 🟢 Offer submit
+      //  Offer submit
       await axiosSecure.post(`/offer`, offerData);
 
-      // 🔴 Remove from wishlist
-      await axiosSecure.delete(`/wishlist/by-property/${property._id}`)
+      //  Remove from wishlist
+      await axiosSecure.delete(`/wishlist/by-property/${property._id}`);
 
       Swal.fire({
         icon: "success",
@@ -81,7 +83,7 @@ const maxPrice = property.maxPrice;
 
       setOfferAmount("");
       setBuyingDate("");
-      navigate("/dashboard/user/bought"); // ✅ Navigate to bought page
+      navigate("/dashboard/user/bought"); // Navigate to bought page
     } catch (err) {
       console.error(err);
       Swal.fire({
@@ -92,11 +94,10 @@ const maxPrice = property.maxPrice;
     }
   };
 
-
-  if (!property) return <Loading />;
+  if (isLoading || !property) return <Loading />;
 
   const minPrice = property.minPrice;
-const maxPrice = property.maxPrice;
+  const maxPrice = property.maxPrice;
 
   return (
     <div className="max-w-3xl mx-auto my-10 bg-white p-8 rounded-lg shadow">

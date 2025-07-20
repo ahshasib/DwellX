@@ -6,7 +6,7 @@ import RotatingSparkleButton from "./RotatingSparkleButton";
 
 const Herosection = () => {
     return (
-        <div className="h-screen w-full">
+        <div className="h-screen w-full mt-0 md:-mt-7">
 
             {/* Slide */}
             <div className="relative min-h-screen w-full overflow-hidden">

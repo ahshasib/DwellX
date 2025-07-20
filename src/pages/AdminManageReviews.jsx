@@ -1,30 +1,39 @@
-import { useEffect, useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import useAxiosSecure from "../hooks/useAxiosSecure";
 import Loading from "../component/Loading";
 import Swal from "sweetalert2";
 
 const AdminManageReviews = () => {
-  const [reviews, setReviews] = useState([]);
-  const [loading, setLoading] = useState(true);
   const axiosSecure = useAxiosSecure();
+  const queryClient = useQueryClient();
 
-  // রিভিউস লোড করা
-  useEffect(() => {
-    const fetchReviews = async () => {
-      try {
-        const res = await axiosSecure.get("/reviews");
-        setReviews(res.data);
-      } catch (error) {
-        console.error("Failed to fetch reviews:", error);
-        Swal.fire("Error", "Failed to load reviews", "error");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchReviews();
-  }, [axiosSecure]);
+  // রিভিউ লোড করার জন্য query
+  const {
+    data: reviews = [],
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["reviews"],
+    queryFn: async () => {
+      const res = await axiosSecure.get("/reviews");
+      return res.data;
+    },
+  });
 
-  // রিভিউ ডিলিট করা
+  // রিভিউ ডিলিট করার জন্য mutation
+  const deleteMutation = useMutation({
+    mutationFn: async (id) => {
+      return await axiosSecure.delete(`/reviews/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["reviews"]);
+      Swal.fire("Deleted!", "Review has been deleted.", "success");
+    },
+    onError: () => {
+      Swal.fire("Error", "Failed to delete review", "error");
+    },
+  });
+
   const handleDelete = async (id) => {
     const confirm = await Swal.fire({
       title: "Are you sure?",
@@ -35,24 +44,22 @@ const AdminManageReviews = () => {
     });
 
     if (confirm.isConfirmed) {
-      try {
-        await axiosSecure.delete(`/reviews/${id}`);
-        setReviews(reviews.filter((rev) => rev._id !== id));
-        Swal.fire("Deleted!", "Review has been deleted.", "success");
-      } catch (error) {
-        console.error("Delete failed:", error);
-        Swal.fire("Error", "Failed to delete review", "error");
-      }
+      deleteMutation.mutate(id);
     }
   };
 
-  if (loading) return <Loading />;
+  if (isLoading) return <Loading />;
+
+  if (isError)
+    return (
+      <div className="text-center text-red-500 mt-10">
+        Failed to load reviews.
+      </div>
+    );
 
   if (reviews.length === 0)
     return (
-      <div className="text-center text-gray-500 mt-10">
-        No reviews found.
-      </div>
+      <div className="text-center text-gray-500 mt-10">No reviews found.</div>
     );
 
   return (
@@ -82,7 +89,9 @@ const AdminManageReviews = () => {
                 <div className="font-semibold text-indigo-700">
                   {review.reviewerName}
                 </div>
-                <div className="text-sm text-gray-600">{review.reviewerEmail}</div>
+                <div className="text-sm text-gray-600">
+                  {review.reviewerEmail}
+                </div>
                 <p className="mt-2 text-gray-700">{review.comment}</p>
               </div>
             </div>
@@ -92,9 +101,7 @@ const AdminManageReviews = () => {
             >
               Delete
             </button>
-            
           </div>
-          
         ))}
       </div>
     </div>

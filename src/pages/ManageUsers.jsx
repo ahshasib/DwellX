@@ -1,20 +1,44 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Swal from "sweetalert2";
 import { Helmet } from "react-helmet-async";
 import useAxiosSecure from "../hooks/useAxiosSecure";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const ManageUsers = () => {
-  const [users, setUsers] = useState([]);
+  const axiosSecure = useAxiosSecure();
+  const queryClient = useQueryClient();
+
   const [selectedUser, setSelectedUser] = useState(null);
   const [newRole, setNewRole] = useState("customer");
-  const axiosSecure = useAxiosSecure();
 
-  useEffect(() => {
-    axiosSecure
-      .get(`/all-users`)
-      .then((res) => setUsers(res.data))
-      .catch((err) => console.error(err));
-  }, [axiosSecure]);
+  // ✅ Fetch users using useQuery
+  const { data: users = [], isLoading } = useQuery({
+    queryKey: ["all-users"],
+    queryFn: async () => {
+      const res = await axiosSecure.get("/all-users");
+      return res.data;
+    },
+  });
+
+  // ✅ Mutation for updating user role
+  const updateRoleMutation = useMutation({
+    mutationFn: async ({ email, role }) => {
+      const res = await axiosSecure.patch(`/user/role/update/${email}`, {
+        role,
+      });
+      return res.data;
+    },
+    onSuccess: (data, variables) => {
+      if (data.modifiedCount > 0) {
+        Swal.fire("Success", `Role changed to ${variables.role}`, "success");
+        queryClient.invalidateQueries(["all-users"]);
+        document.getElementById("roleModal").close();
+      }
+    },
+    onError: () => {
+      Swal.fire("Error", "Failed to update role", "error");
+    },
+  });
 
   const openModal = (user) => {
     setSelectedUser(user);
@@ -22,28 +46,9 @@ const ManageUsers = () => {
     document.getElementById("roleModal").showModal();
   };
 
-  const handleUpdateRole = async () => {
-    try {
-      const res = await axiosSecure.patch(
-        `/user/role/update/${selectedUser.email}`,
-        { role: newRole }
-      );
-
-      if (res.data.modifiedCount > 0) {
-        Swal.fire("Success", `Role changed to ${newRole}`, "success");
-        setUsers((prev) =>
-          prev.map((user) =>
-            user._id === selectedUser._id
-              ? { ...user, role: newRole, status: "verified" }
-              : user
-          )
-        );
-      }
-      document.getElementById("roleModal").close();
-    } catch (error) {
-      console.error(error);
-      Swal.fire("Error", "Failed to update role", "error");
-    }
+  const handleUpdateRole = () => {
+    if (!selectedUser) return;
+    updateRoleMutation.mutate({ email: selectedUser.email, role: newRole });
   };
 
   return (
@@ -55,61 +60,66 @@ const ManageUsers = () => {
         Manage Users
       </h2>
 
-      <div className="overflow-x-auto">
-        <table className="table w-full text-sm">
-          <thead>
-            <tr className="bg-indigo-100 text-indigo-800 font-semibold">
-              <th>#</th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Current Role</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user, index) => (
-              <tr key={user._id} className="hover:bg-gray-50">
-                <td>{index + 1}</td>
-                <td>{user.name || "N/A"}</td>
-                <td>{user.email}</td>
-                <td>
-                  <span className="capitalize px-2 py-1 rounded bg-gray-100 text-gray-800">
-                    {user.role}
-                  </span>
-                </td>
-                <td>
-                  <span
-                    className={`capitalize px-2 py-1 rounded 
-                        ${user.status === 'requested'
-                        ? 'bg-yellow-200 text-yellow-800'
-                        : user.status === 'verified'
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-red-100 text-red-800'}`}
-                  >
-                    {user.status || "Unverified"}
-                  </span>
-                </td>
-                <td>
-                  <button
-                    className="btn btn-sm btn-outline btn-primary"
-                    onClick={() => openModal(user)}
-                  >
-                    Change Role
-                  </button>
-                </td>
+      {isLoading ? (
+        <div className="text-center mt-10 text-lg text-gray-600">Loading users...</div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="table w-full text-sm">
+            <thead>
+              <tr className="bg-indigo-100 text-indigo-800 font-semibold">
+                <th>#</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Current Role</th>
+                <th>Status</th>
+                <th>Action</th>
               </tr>
-            ))}
-            {users.length === 0 && (
-              <tr>
-                <td colSpan="6" className="text-center py-4 text-gray-500">
-                  No users found.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {users.map((user, index) => (
+                <tr key={user._id} className="hover:bg-gray-50">
+                  <td>{index + 1}</td>
+                  <td>{user.name || "N/A"}</td>
+                  <td>{user.email}</td>
+                  <td>
+                    <span className="capitalize px-2 py-1 rounded bg-gray-100 text-gray-800">
+                      {user.role}
+                    </span>
+                  </td>
+                  <td>
+                    <span
+                      className={`capitalize px-2 py-1 rounded 
+                      ${user.status === "requested"
+                          ? "bg-yellow-200 text-yellow-800"
+                          : user.status === "verified"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
+                    >
+                      {user.status || "Unverified"}
+                    </span>
+                  </td>
+                  <td>
+                    <button
+                      className="btn btn-sm btn-outline btn-primary"
+                      onClick={() => openModal(user)}
+                    >
+                      Change Role
+                    </button>
+                  </td>
+                </tr>
+              ))}
+              {users.length === 0 && (
+                <tr>
+                  <td colSpan="6" className="text-center py-4 text-gray-500">
+                    No users found.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       {/* Modal */}
       <dialog id="roleModal" className="modal">
@@ -131,8 +141,9 @@ const ManageUsers = () => {
                 type="button"
                 className="btn btn-primary"
                 onClick={handleUpdateRole}
+                disabled={updateRoleMutation.isLoading}
               >
-                OK
+                {updateRoleMutation.isLoading ? "Updating..." : "OK"}
               </button>
             </form>
           </div>

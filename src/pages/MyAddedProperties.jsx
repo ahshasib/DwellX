@@ -1,32 +1,47 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthProvider";
 import useAxiosSecure from "../hooks/useAxiosSecure";
 import Swal from "sweetalert2";
 import Loading from "../component/Loading";
 import UpdateModal from "../component/UpdateModal";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const MyAddedProperties = () => {
   const { user } = useContext(AuthContext);
   const axiosSecure = useAxiosSecure();
-  const [properties, setProperties] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
   const [selectedProperty, setSelectedProperty] = useState(null);
 
-  const fetchProperties = async () => {
-    try {
+  // ✅ Fetch properties using TanStack Query
+  const {
+    data: properties = [],
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["my-properties", user?.email],
+    queryFn: async () => {
       const res = await axiosSecure.get(`/my-properties?email=${user.email}`);
-      setProperties(res.data);
-    } catch (err) {
-      console.error("Error fetching properties:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+      return res.data;
+    },
+    enabled: !!user?.email, // wait until user is loaded
+  });
 
-  useEffect(() => {
-    fetchProperties();
-  }, [user.email]);
+  // ✅ Mutation to delete a property
+  const deleteMutation = useMutation({
+    mutationFn: async (id) => {
+      const res = await axiosSecure.delete(`/my-property/${id}`);
+      return res.data;
+    },
+    onSuccess: () => {
+      Swal.fire("Deleted!", "Property deleted successfully.", "success");
+      queryClient.invalidateQueries(["my-properties", user?.email]);
+    },
+    onError: () => {
+      Swal.fire("Error", "Something went wrong.", "error");
+    },
+  });
 
+  // ✅ Delete handler with confirmation
   const handleDelete = async (id) => {
     const confirm = await Swal.fire({
       title: "Are you sure?",
@@ -39,18 +54,12 @@ const MyAddedProperties = () => {
     });
 
     if (confirm.isConfirmed) {
-      try {
-        await axiosSecure.delete(`/my-property/${id}`);
-        Swal.fire("Deleted!", "Property deleted successfully.", "success");
-        fetchProperties(); // refresh after delete
-      } catch (error) {
-        console.error("Delete failed:", error);
-        Swal.fire("Error", "Something went wrong.", "error");
-      }
+      deleteMutation.mutate(id);
     }
   };
 
-  if (loading) return <Loading />;
+  if (isLoading) return <Loading />;
+  if (isError) return <p className="text-center text-red-500">Failed to load properties.</p>;
 
   return (
     <div className="p-8">
@@ -105,8 +114,9 @@ const MyAddedProperties = () => {
                 <button
                   onClick={() => handleDelete(property._id)}
                   className="bg-red-600 hover:bg-red-700 text-white px-4 py-1 rounded"
+                  disabled={deleteMutation.isLoading}
                 >
-                  🗑️ Delete
+                  {deleteMutation.isLoading ? "Deleting..." : "🗑️ Delete"}
                 </button>
               </div>
             </div>
@@ -119,7 +129,9 @@ const MyAddedProperties = () => {
         <UpdateModal
           property={selectedProperty}
           closeModal={() => setSelectedProperty(null)}
-          refetch={fetchProperties}
+          refetch={() =>
+            queryClient.invalidateQueries(["my-properties", user?.email])
+          }
         />
       )}
     </div>

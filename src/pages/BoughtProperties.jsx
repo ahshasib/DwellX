@@ -1,42 +1,31 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthProvider";
 import Loading from "../component/Loading";
 import useAxiosSecure from "../hooks/useAxiosSecure";
-
 import PaymentModal from "../component/PaymentModal";
+import { useQuery } from "@tanstack/react-query";
 
 const BoughtProperties = () => {
   const { user } = useContext(AuthContext);
-  const [offers, setOffers] = useState([]);
-  const [loading, setLoading] = useState(true);
   const axiosSecure = useAxiosSecure();
   const [selectedOffer, setSelectedOffer] = useState(null);
 
-  const fetchOffers = async () => {
-    setLoading(true); // Optional: show loading again if manually refreshing
-    try {
+  // TanStack Query দিয়ে অফার লোড করা
+  const { data: offers = [], isLoading, refetch } = useQuery({
+    queryKey: ["offers", user?.email],
+    enabled: !!user?.email,
+    queryFn: async () => {
       const res = await axiosSecure.get(`/offers?email=${user.email}`);
-      setOffers(res.data);
-    } catch (err) {
-      console.error("Failed to fetch offers:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (user?.email) {
-      fetchOffers();
-    }
-  }, [user.email, axiosSecure]);
+      return res.data;
+    },
+  });
 
   const handlePay = (offer) => {
     setSelectedOffer(offer);
     document.getElementById("paymentModal").showModal();
-
   };
 
-  if (loading) return <Loading />;
+  if (isLoading) return <Loading />;
 
   if (offers.length === 0) {
     return (
@@ -63,6 +52,7 @@ const BoughtProperties = () => {
               ${offer.status === 'pending' ? 'bg-yellow-200 text-yellow-700 mt-2' : ''}
               ${offer.status === 'accepted' ? 'bg-green-200 text-green-700 mt-2' : ''}
               ${offer.status === 'rejected' ? 'bg-red-200 text-red-700 mt-2' : ''}
+              ${offer.status === 'paid' ? 'bg-blue-200 text-blue-700 mt-2' : ''}
             `}>
               {offer.status.charAt(0).toUpperCase() + offer.status.slice(1)}
             </span>
@@ -82,26 +72,19 @@ const BoughtProperties = () => {
                 Bought
               </button>
             ) : null}
-
-
-
           </div>
-
-
-
         ))}
       </div>
-
 
       {/* modal */}
       <PaymentModal
         offerAmount={selectedOffer?.offerAmount}
         offerId={selectedOffer?._id}
-        onPaymentSuccess={fetchOffers}
-        sellerEmail = {selectedOffer?.buyerEmail} 
-        id="paymentModal" title="Stripe Payment Coming Soon!" />
-
-
+        onPaymentSuccess={refetch}
+        sellerEmail={selectedOffer?.buyerEmail}
+        id="paymentModal"
+        title="Stripe Payment Coming Soon!"
+      />
     </div>
   );
 };

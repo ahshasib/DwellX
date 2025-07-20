@@ -1,4 +1,5 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { AuthContext } from "../context/AuthProvider";
 import useAxiosSecure from "../hooks/useAxiosSecure";
 import Swal from "sweetalert2";
@@ -6,56 +7,53 @@ import Swal from "sweetalert2";
 const RequestedProperties = () => {
   const { user } = useContext(AuthContext);
   const axiosSecure = useAxiosSecure();
-  const [offers, setOffers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
 
-  // fetch all offers for this agent
-  useEffect(() => {
-    if (user?.email) {
-      axiosSecure
-        .get(`/agent/offers?email=${user.email}`)
-        .then((res) => {
-          setOffers(res.data);
-          setLoading(false);
-        })
-        .catch((err) => {
-          console.error("Error fetching offers:", err);
-          setLoading(false);
-        });
-    }
-  }, [user?.email, axiosSecure]);
-
-  const handleAccept = async (offerId) => {
-    try {
-      const result = await axiosSecure.patch(`/offer/accept/${offerId}`);
-      if (result.data.modifiedCount || result.data.message) {
-        Swal.fire("Accepted", "Offer accepted successfully!", "success");
-
-        // Reload offers
-        const res = await axiosSecure.get(`/agent/offers?email=${user.email}`);
-        setOffers(res.data);
-      }
-    } catch (error) {
-      console.error(error);
-      Swal.fire("Error", "Something went wrong!", "error");
-    }
-  };
-
-  const handleReject = async (offerId) => {
-    try {
-      await axiosSecure.patch(`/offer/reject/${offerId}`);
-      Swal.fire("Rejected", "Offer rejected successfully!", "success");
-
-      // Reload offers
+  // Fetch offers
+  const { data: offers = [], isLoading } = useQuery({
+    queryKey: ["agentOffers", user?.email],
+    enabled: !!user?.email,
+    queryFn: async () => {
       const res = await axiosSecure.get(`/agent/offers?email=${user.email}`);
-      setOffers(res.data);
-    } catch (error) {
-      console.error(error);
+      return res.data;
+    },
+  });
+
+  // Accept offer mutation
+  const acceptMutation = useMutation({
+    mutationFn: async (offerId) =>
+      await axiosSecure.patch(`/offer/accept/${offerId}`),
+    onSuccess: () => {
+      Swal.fire("Accepted", "Offer accepted successfully!", "success");
+      queryClient.invalidateQueries(["agentOffers", user?.email]);
+    },
+    onError: () => {
       Swal.fire("Error", "Something went wrong!", "error");
-    }
+    },
+  });
+
+  // Reject offer mutation
+  const rejectMutation = useMutation({
+    mutationFn: async (offerId) =>
+      await axiosSecure.patch(`/offer/reject/${offerId}`),
+    onSuccess: () => {
+      Swal.fire("Rejected", "Offer rejected successfully!", "success");
+      queryClient.invalidateQueries(["agentOffers", user?.email]);
+    },
+    onError: () => {
+      Swal.fire("Error", "Something went wrong!", "error");
+    },
+  });
+
+  const handleAccept = (offerId) => {
+    acceptMutation.mutate(offerId);
   };
 
-  if (loading) return <p className="text-center mt-10">Loading offers...</p>;
+  const handleReject = (offerId) => {
+    rejectMutation.mutate(offerId);
+  };
+
+  if (isLoading) return <p className="text-center mt-10">Loading offers...</p>;
 
   return (
     <div className="max-w-6xl mx-auto p-6">
@@ -105,23 +103,24 @@ const RequestedProperties = () => {
                     </span>
                   </td>
                   <td className="text-center space-x-2">
-                    {offer.status === "pending" && (
+                    {offer.status === "pending" ? (
                       <>
                         <button
                           onClick={() => handleAccept(offer._id)}
+                          disabled={acceptMutation.isLoading}
                           className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm"
                         >
                           Accept
                         </button>
                         <button
                           onClick={() => handleReject(offer._id)}
+                          disabled={rejectMutation.isLoading}
                           className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm"
                         >
                           Reject
                         </button>
                       </>
-                    )}
-                    {offer.status !== "pending" && (
+                    ) : (
                       <span className="text-gray-500 text-sm italic">
                         No action
                       </span>

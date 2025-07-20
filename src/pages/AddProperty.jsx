@@ -1,35 +1,54 @@
 import React, { useContext, useState } from "react";
-
 import { AuthContext } from "../context/AuthProvider";
 import AddPropertyForm from "../component/AddPropertyForm";
-import axios from "axios";
 import { imageUpload } from "../api/utils";
 import Swal from "sweetalert2";
 import useAxiosSecure from "../hooks/useAxiosSecure";
-
+import { useMutation } from "@tanstack/react-query";
 
 const AddProperty = () => {
   const { user } = useContext(AuthContext);
-  const [uploading,setUploading] = useState(false)
-  const axiosSecure = useAxiosSecure(); 
+  const [uploading, setUploading] = useState(false);
+  const axiosSecure = useAxiosSecure();
 
+  // Step 1: Create mutation for posting property
+  const addPropertyMutation = useMutation({
+    mutationFn: async (propertyData) => {
+      const { data } = await axiosSecure.post(`/add-properties`, propertyData);
+      return data;
+    },
+    onSuccess: () => {
+      Swal.fire({
+        icon: "success",
+        title: "Property added Successful!",
+        text: `Thanks for uploading, ${user.displayName}!`,
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "OK",
+      });
+    },
+    onError: (error) => {
+      console.error("Failed to add property:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Upload failed!",
+        text: "Something went wrong. Please try again.",
+      });
+    },
+    onSettled: () => {
+      setUploading(false);
+    },
+  });
+
+  // Step 2: Form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setUploading(true)
+    setUploading(true);
     const form = e.target;
-  
     const imageFile = form.image.files[0];
-  
-    // Step 1: Convert image to FormData
-    
-  
+
     try {
-      // Step 2: Upload to imgbb
-     
-  
-      const imageUrl = await imageUpload(imageFile) // uploaded image URL
-  
-      // Step 3: Create propertyData object with imageUrl
+      const imageUrl = await imageUpload(imageFile); // uploaded image URL
+
       const propertyData = {
         title: form.title.value,
         location: form.location.value,
@@ -45,40 +64,23 @@ const AddProperty = () => {
         agent: {
           name: user.displayName,
           email: user.email,
-          image:user.photoURL
+          image: user.photoURL,
         },
       };
-  
-      // console.log("Submitted Property:", propertyData);
-      const {data} = await axiosSecure.post(`/add-properties`,propertyData
-      )
 
-      Swal.fire({
-        icon: 'success',
-        title: 'Property added Successful!',
-        text: `Thanks for uploading, ${user.displayName}!`,
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'OK'
-      })
-  
-      form.reset()
-      // Step 4: Send propertyData to your database/server
-      // await axios.post('YOUR_API_URL/properties', propertyData);
-  
+      // Step 3: Call mutation
+      addPropertyMutation.mutate(propertyData);
+      form.reset();
+
     } catch (error) {
       console.error("Image upload failed:", error);
-    }
-    finally{
-        setUploading(false)
+      setUploading(false);
     }
   };
-  
-  
-
 
   return (
     <div>
-        <AddPropertyForm handleSubmit = {handleSubmit} uploading={uploading}></AddPropertyForm>
+      <AddPropertyForm handleSubmit={handleSubmit} uploading={uploading} />
     </div>
   );
 };

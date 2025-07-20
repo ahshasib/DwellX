@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   FaSearch,
   FaThLarge,
@@ -10,49 +10,40 @@ import {
   FaShareAlt,
 } from "react-icons/fa";
 import useAxiosSecure from "../hooks/useAxiosSecure";
-import { NavLink } from "react-router";
+import { useQuery } from "@tanstack/react-query";
+import { NavLink } from "react-router"; // fixed import
 
 const AllPropertiesPage = () => {
-  const [layout, setLayout] = useState("grid"); // grid or list
+  const [layout, setLayout] = useState("grid");
   const [search, setSearch] = useState("");
-  const [searchQuery, setSearchQuery] = useState(""); // সার্চ বাটনে ক্লিক করলে এইটা API কল করবে
+  const [searchQuery, setSearchQuery] = useState("");
   const [sort, setSort] = useState("");
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
+
   const axiosSecure = useAxiosSecure();
 
-  // সার্চ বাটনে ক্লিক করলে এই ফাংশন কল হবে
+  // ⬇️ Tanstack Query: fetch properties with search + sort params
+  const {
+    data = [],
+    isLoading,
+    isFetching,
+    isError,
+  } = useQuery({
+    queryKey: ["properties", searchQuery, sort],
+    queryFn: async () => {
+      const res = await axiosSecure.get("/verified-properties", {
+        params: {
+          search: searchQuery || undefined,
+          sort: sort || undefined,
+        },
+      });
+      return res.data;
+    },
+    keepPreviousData: true,
+  });
+
   const handleSearch = () => {
     setSearchQuery(search.trim());
   };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const res = await axiosSecure.get("http://localhost:5000/verified-properties", {
-          params: {
-            search: searchQuery || undefined,
-            sort: sort || undefined,
-          },
-        });
-        setData(res.data);
-      } catch (err) {
-        console.error("Error fetching properties:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [searchQuery, sort]);
-
-  // পেজ লোড হলে প্রথমে সব প্রপার্টি দেখানোর জন্য:
-  useEffect(() => {
-    // প্রথমবার searchQuery ফাঁকা থাকবে, তাই সব প্রপার্টি আসবে
-    setSearchQuery("");
-  }, []);
-
 
   return (
     <div className="min-h-screen py-12 px-4 md:px-10 bg-gradient-to-br from-purple-50 via-white to-indigo-50 pb-16">
@@ -115,14 +106,21 @@ const AllPropertiesPage = () => {
         </div>
 
         {/* Loading */}
-        {loading && (
+        {(isLoading || isFetching) && (
           <p className="text-center py-20 text-blue-600 font-semibold text-xl">
             Loading properties...
           </p>
         )}
 
+        {/* Error */}
+        {isError && (
+          <p className="text-center py-20 text-red-500 font-semibold text-xl">
+            Failed to load properties.
+          </p>
+        )}
+
         {/* No Data */}
-        {!loading && data.length === 0 && (
+        {!isLoading && data.length === 0 && (
           <p className="text-center py-20 text-gray-500 font-semibold text-xl">
             No properties found.
           </p>
@@ -136,8 +134,7 @@ const AllPropertiesPage = () => {
               : "flex flex-col gap-6"
           }
         >
-          {data.map((item) => ( 
-            
+          {data.map((item) => (
             <div
               key={item._id}
               className={`bg-white rounded-2xl shadow-md overflow-hidden relative flex ${
@@ -186,7 +183,9 @@ const AllPropertiesPage = () => {
                         alt={item.agent?.name}
                         className="w-8 h-8 rounded-full border"
                       />
-                      <p className="text-sm text-gray-700">{item.agent?.name}</p>
+                      <p className="text-sm text-gray-700">
+                        {item.agent?.name}
+                      </p>
                     </div>
                   </div>
 
@@ -213,12 +212,11 @@ const AllPropertiesPage = () => {
                   </div>
                 </div>
 
-               <NavLink to={`/property/${item._id}`}>
-               <button className="mt-4 w-full bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white py-4 rounded-xl text-sm hover:from-blue-700 hover:via-purple-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl shadow-blue-500/30">
-                  Detailed information
-                </button>
-
-               </NavLink>
+                <NavLink to={`/property/${item._id}`}>
+                  <button className="mt-4 w-full bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white py-4 rounded-xl text-sm hover:from-blue-700 hover:via-purple-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl shadow-blue-500/30">
+                    Detailed information
+                  </button>
+                </NavLink>
               </div>
             </div>
           ))}

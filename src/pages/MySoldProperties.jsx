@@ -1,4 +1,5 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import useAxiosSecure from '../hooks/useAxiosSecure';
 import { AuthContext } from '../context/AuthProvider';
 import Loading from '../component/Loading';
@@ -6,31 +7,24 @@ import Loading from '../component/Loading';
 const MySoldProperties = () => {
   const { user } = useContext(AuthContext);
   const axiosSecure = useAxiosSecure();
-  const [soldProperties, setSoldProperties] = useState([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (!user?.email) return; 
+  // ✅ TanStack useQuery to fetch sold properties
+  const { data: soldProperties = [], isLoading, isError, error } = useQuery({
+    queryKey: ['sold-properties', user?.email],
+    enabled: !!user?.email, // only run if user email exists
+    queryFn: async () => {
+      const res = await axiosSecure.get(`/sold-properties?sellerEmail=${user.email}`);
+      return res.data;
+    },
+  });
 
-    const fetchSoldProperties = async () => {
-      try {
-        const res = await axiosSecure.get(`/sold-properties?sellerEmail=${user.email}`);
-        setSoldProperties(res.data);
-      } catch (err) {
-        console.error("Error fetching sold properties:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSoldProperties();
-  }, [axiosSecure, user?.email]);
-
-  if (loading) return <Loading />;
+  if (isLoading) return <Loading />;
+  if (isError) return <p className="text-red-500 p-4">Error: {error.message}</p>;
 
   return (
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-6 text-green-700">My Sold Properties</h2>
+
       {soldProperties.length === 0 ? (
         <p className="text-gray-500">No properties sold yet.</p>
       ) : (
@@ -42,7 +36,7 @@ const MySoldProperties = () => {
               <p className="text-gray-600">💰 ৳{property.offerAmount}</p>
               <p className="text-gray-600">👤 Buyer: {property.buyerName}</p>
               <p className="text-gray-600">📧 {property.buyerEmail}</p>
-              <p className="text-gray-600">🟢 Status: 
+              <p className="text-gray-600">🟢 Status:
                 <span className="ml-2 font-medium text-green-600 capitalize">{property.status}</span>
               </p>
             </div>

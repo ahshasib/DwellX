@@ -1,4 +1,5 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { AuthContext } from "../context/AuthProvider";
 import useAxiosSecure from "../hooks/useAxiosSecure";
 import { FaTrash } from "react-icons/fa";
@@ -10,28 +11,35 @@ import EmptyState from "../component/EmptyState";
 const MyReviews = () => {
   const { user } = useContext(AuthContext);
   const axiosSecure = useAxiosSecure();
-  const [reviews, setReviews] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
 
-  // Fetch my reviews
-  useEffect(() => {
-    if (!user) return;
+  // 🔄 Fetch reviews using TanStack Query
+  const { data: reviews = [], isLoading } = useQuery({
+    queryKey: ["myReviews", user?.email],
+    enabled: !!user?.email,
+    queryFn: async () => {
+      const res = await axiosSecure.get(`/reviews/by-user/${user.email}`);
+      return res.data;
+    },
+  });
 
-    const fetchReviews = async () => {
-      try {
-        const res = await axiosSecure.get(`/reviews/by-user/${user.email}`);
-        setReviews(res.data);
-      } catch (err) {
-        console.error("Error fetching my reviews:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // ❌ Delete review using mutation
+  const deleteMutation = useMutation({
+    mutationFn: async (id) => {
+      return await axiosSecure.delete(`/reviews/${id}`);
+    },
+    onSuccess: (_, id) => {
+      queryClient.setQueryData(["myReviews", user?.email], (old) =>
+        old.filter((review) => review._id !== id)
+      );
+      Swal.fire("Deleted!", "Your review has been deleted.", "success");
+    },
+    onError: () => {
+      Swal.fire("Error!", "Failed to delete review.", "error");
+    },
+  });
 
-    fetchReviews();
-  }, [user, axiosSecure]);
-
-  // Handle Delete
+  // 🔘 Delete button handler
   const handleDelete = async (id) => {
     const confirm = await Swal.fire({
       title: "Are you sure?",
@@ -43,19 +51,13 @@ const MyReviews = () => {
     });
 
     if (confirm.isConfirmed) {
-      try {
-        await axiosSecure.delete(`/reviews/${id}`);
-        setReviews(reviews.filter((review) => review._id !== id));
-        Swal.fire("Deleted!", "Your review has been deleted.", "success");
-      } catch (err) {
-        console.error(err);
-        Swal.fire("Error!", "Failed to delete review.", "error");
-      }
+      deleteMutation.mutate(id);
     }
   };
 
-  if (loading) return <Loading />;
-  if (reviews.length === 0) return <EmptyState message="You haven't added any reviews yet." />;
+  if (isLoading) return <Loading />;
+  if (reviews.length === 0)
+    return <EmptyState message="You haven't added any reviews yet." />;
 
   return (
     <div className="p-5 md:p-10 bg-gray-50 min-h-screen">
