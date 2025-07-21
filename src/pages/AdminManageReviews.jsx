@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import useAxiosSecure from "../hooks/useAxiosSecure";
 import Loading from "../component/Loading";
 import Swal from "sweetalert2";
+import { Helmet } from "react-helmet-async";
 
 const AdminManageReviews = () => {
   const axiosSecure = useAxiosSecure();
@@ -64,6 +65,9 @@ const AdminManageReviews = () => {
 
   return (
     <div className="max-w-6xl mx-auto p-6">
+      <Helmet>
+        <title>Manage Review | Dashboard</title>
+      </Helmet>
       <h1 className="text-3xl font-bold mb-6 text-indigo-700">
         Manage User Reviews
       </h1>

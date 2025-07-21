@@ -5,6 +5,7 @@ import { imageUpload } from "../api/utils";
 import Swal from "sweetalert2";
 import useAxiosSecure from "../hooks/useAxiosSecure";
 import { useMutation } from "@tanstack/react-query";
+import { Helmet } from "react-helmet-async";
 
 const AddProperty = () => {
   const { user } = useContext(AuthContext);
@@ -80,6 +81,9 @@ const AddProperty = () => {
 
   return (
     <div>
+      <Helmet>
+        <title>Add Property | Dashboard</title>
+      </Helmet>
       <AddPropertyForm handleSubmit={handleSubmit} uploading={uploading} />
     </div>
   );

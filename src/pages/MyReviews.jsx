@@ -7,6 +7,7 @@ import Swal from "sweetalert2";
 import moment from "moment";
 import Loading from "../component/Loading";
 import EmptyState from "../component/EmptyState";
+import { Helmet } from "react-helmet-async";
 
 const MyReviews = () => {
   const { user } = useContext(AuthContext);
@@ -60,8 +61,11 @@ const MyReviews = () => {
     return <EmptyState message="You haven't added any reviews yet." />;
 
   return (
-    <div className="p-5 md:p-10 bg-gray-50 min-h-screen">
-      <h2 className="text-2xl font-bold text-indigo-700 mb-6">My Reviews</h2>
+    <div className="p-5 md:p-10  min-h-screen">
+      <Helmet>
+        <title>My Review | Dashboard</title>
+      </Helmet>
+      <h2 className="text-2xl font-bold text-indigo-700 mb-6 text-center">My Reviews</h2>
       <div className="grid gap-4">
         {reviews.map((review) => (
           <div

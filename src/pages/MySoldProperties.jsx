@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import useAxiosSecure from '../hooks/useAxiosSecure';
 import { AuthContext } from '../context/AuthProvider';
 import Loading from '../component/Loading';
+import { Helmet } from 'react-helmet-async';
 
 const MySoldProperties = () => {
   const { user } = useContext(AuthContext);
@@ -23,6 +24,9 @@ const MySoldProperties = () => {
 
   return (
     <div className="p-6">
+      <Helmet>
+        <title>My Sold Properties | Dashboard</title>
+      </Helmet>
       <h2 className="text-2xl font-bold mb-6 text-green-700">My Sold Properties</h2>
 
       {soldProperties.length === 0 ? (

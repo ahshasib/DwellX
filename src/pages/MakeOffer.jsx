@@ -5,6 +5,7 @@ import Swal from "sweetalert2";
 import Loading from "../component/Loading";
 import useAxiosSecure from "../hooks/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
+import { Helmet } from "react-helmet-async";
 
 const MakeOffer = () => {
   const { id } = useParams();
@@ -101,6 +102,9 @@ const MakeOffer = () => {
 
   return (
     <div className="max-w-3xl mx-auto my-10 bg-white p-8 rounded-lg shadow">
+      <Helmet>
+        <title>Make an Offer | Dashboard</title>
+      </Helmet>
       <h2 className="text-2xl font-bold mb-6 text-indigo-600">Make an Offer</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <input

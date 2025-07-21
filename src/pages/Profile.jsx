@@ -4,6 +4,7 @@ import useRole from '../hooks/useRole';
 import { updateProfile, updatePassword } from 'firebase/auth';
 import Swal from 'sweetalert2';
 import Loading from '../component/Loading';
+import { Helmet } from 'react-helmet-async';
 
 const Profile = () => {
   const { user } = useContext(AuthContext);
@@ -48,6 +49,9 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-100 to-purple-100">
+      <Helmet>
+        <title>Profile | Dashboard</title>
+      </Helmet>
       <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-lg">
         {/* 🖼️ Profile Card */}
         <div className="text-center mb-6">

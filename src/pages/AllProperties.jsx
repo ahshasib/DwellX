@@ -13,6 +13,7 @@ import useAxiosSecure from "../hooks/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
 import { NavLink } from "react-router"; 
 import EmptyState from "../component/EmptyState";
+import { Helmet } from "react-helmet-async";
 
 const AllPropertiesPage = () => {
   const [layout, setLayout] = useState("grid");
@@ -48,6 +49,9 @@ const AllPropertiesPage = () => {
 
   return (
     <div className="min-h-screen py-12 px-4 mt-0 md:-mt-5 md:px-10 bg-gradient-to-br from-purple-50 via-white to-indigo-50 pb-16">
+    <Helmet>
+        <title>All Properties | Dashboard</title>
+      </Helmet>
      <div className="text-center py-2 md:py-8">
      <h1 className="font-bold text-xl md:text-5xl">Find Your Perfect Property</h1>
      <p className=" text-md md:2xl text-gray-600 py-2 md:py-5">Discover a curated collection of premium properties</p>

@@ -5,6 +5,7 @@ import Swal from "sweetalert2";
 import Loading from "../component/Loading";
 import UpdateModal from "../component/UpdateModal";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Helmet } from "react-helmet-async";
 
 const MyAddedProperties = () => {
   const { user } = useContext(AuthContext);
@@ -63,6 +64,9 @@ const MyAddedProperties = () => {
 
   return (
     <div className="p-8">
+      <Helmet>
+        <title>My Added Properties | Dashboard</title>
+      </Helmet>
       <h2 className="text-3xl font-bold mb-6 text-center text-indigo-600">
         🏠 My Added Properties
       </h2>

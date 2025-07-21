@@ -4,6 +4,7 @@ import Loading from "../component/Loading";
 import useAxiosSecure from "../hooks/useAxiosSecure";
 import PaymentModal from "../component/PaymentModal";
 import { useQuery } from "@tanstack/react-query";
+import { Helmet } from "react-helmet-async";
 
 const BoughtProperties = () => {
   const { user } = useContext(AuthContext);
@@ -38,6 +39,9 @@ const BoughtProperties = () => {
 
   return (
     <div className="p-6">
+      <Helmet>
+        <title>Bought Properties | Dashboard</title>
+      </Helmet>
       <h2 className="text-2xl font-bold text-indigo-700 mb-6">Your Property Offers</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         {offers.map(offer => (

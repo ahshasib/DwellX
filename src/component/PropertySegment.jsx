@@ -82,8 +82,8 @@ const PropertySegment = () => {
         className="mx-auto border-t-4 border-blue-600 my-6"
       />
 
-      <p className="text-gray-500 text-center my-10">
-        Discover our handpicked selection of premium properties designed to <br /> match your lifestyle needs
+      <p className="text-gray-500 text-center my-10 w-[90%] md:w-[50%] mx-auto">
+        Discover our handpicked selection of premium properties designed to  match your lifestyle needs
       </p>
 
       {/* Category buttons */}
@@ -171,9 +171,9 @@ const PropertySegment = () => {
 
       {/* Browse All Button */}
       <div className="flex justify-center mt-16">
-        <button className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white px-8 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl shadow-blue-500/30 hover:from-blue-700 hover:via-purple-700 hover:to-indigo-700 transition-all duration-300 flex items-center justify-center gap-2">
+      <Link to="/allproperties"> <button className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white px-8 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl shadow-blue-500/30 hover:from-blue-700 hover:via-purple-700 hover:to-indigo-700 transition-all duration-300 flex items-center justify-center gap-2">
           Browse All Properties <FaArrowRight />
-        </button>
+        </button></Link>
       </div>
       <p className="text-center text-sm text-gray-500 pt-5">
         Start your journey with industry-leading companies today

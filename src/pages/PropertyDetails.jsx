@@ -13,6 +13,7 @@ import { AuthContext } from "../context/AuthProvider";
 import useAxiosSecure from "../hooks/useAxiosSecure";
 import Loading from "../component/Loading";
 import EmptyState from "../component/EmptyState";
+import { Helmet } from "react-helmet-async";
 
 const PropertyDetails = () => {
   const { id } = useParams();
@@ -139,6 +140,9 @@ const PropertyDetails = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4 md:px-20">
+      <Helmet>
+        <title> Property Detils | DuellX</title>
+      </Helmet>
       <div className="max-w-5xl mx-auto bg-white shadow-lg rounded-2xl overflow-hidden">
         <img
           src={property.image}

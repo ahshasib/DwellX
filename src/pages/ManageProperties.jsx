@@ -2,6 +2,7 @@ import React from "react";
 import Swal from "sweetalert2";
 import useAxiosSecure from "../hooks/useAxiosSecure";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Helmet } from "react-helmet-async";
 
 const ManageProperties = () => {
   const axiosSecure = useAxiosSecure();
@@ -56,11 +57,14 @@ const ManageProperties = () => {
 
   return (
     <div className="p-6">
+      <Helmet>
+        <title>Manage Properties | Dashboard</title>
+      </Helmet>
       <h2 className="text-2xl font-bold mb-6">Manage Properties</h2>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white shadow-md rounded-md">
           <thead>
-            <tr className="bg-gray-200 text-gray-700 uppercase text-sm leading-normal">
+            <tr className="bg-indigo-100 text-gray-700 uppercase text-sm leading-normal">
               <th className="py-3 px-6 text-left">Title</th>
               <th className="py-3 px-6 text-left">Location</th>
               <th className="py-3 px-6 text-left">Agent Name</th>

@@ -2,8 +2,6 @@ import { motion } from "framer-motion";
 import {
   FaStar,
   FaCheckCircle,
-  FaQuoteRight,
-  FaQuoteLeft,
   FaArrowRight,
   FaHeart,
 } from "react-icons/fa";
@@ -24,7 +22,6 @@ const TestimonialSection = () => {
     data: reviews = [],
     isLoading,
     isError,
-    error,
   } = useQuery({
     queryKey: ["latest-reviews"],
     queryFn: () => fetchLatestReviews(axiosSecure),
@@ -38,7 +35,7 @@ const TestimonialSection = () => {
     <section className="mt-20 py-24 px-4 dark:from-gray-900 dark:to-gray-800">
       {/* Section Title */}
       <div className="text-center mb-20">
-        <h1 className="text-5xl font-extrabold text-indigo-900 dark:text-white mb-4">
+        <h1 className="text-3xl md:text-5xl font-extrabold text-indigo-900 dark:text-white mb-4">
           What Our Clients <br /> <span className="text-indigo-500">Are Saying</span>
         </h1>
         <hr className="border-t-4 border-indigo-600 w-[10%] mx-auto my-8 rounded-full" />
@@ -55,7 +52,14 @@ const TestimonialSection = () => {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: i * 0.15 }}
-            className="relative bg-white/20 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl p-8 pb-12 dark:bg-white/5"
+            className="relative bg-white/20 backdrop-blur-xl border border-white/10 rounded-3xl p-8 pb-12 dark:bg-white/5"
+            style={{
+              boxShadow: `
+                inset 10px 10px 20px rgba(99, 102, 241, 0.12),   /* top-left indigo - softer */
+                inset -10px -10px 20px rgba(139, 92, 246, 0.12)  /* bottom-right violet - softer */
+              `,
+            }}
+            
           >
             {/* Verified Badge */}
             <div className="absolute -top-6 right-6 flex items-center gap-2 bg-gradient-to-r from-green-400 to-emerald-500 text-white px-4 py-1.5 rounded-full shadow-md text-sm font-semibold z-10">

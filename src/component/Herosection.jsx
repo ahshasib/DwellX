@@ -3,6 +3,7 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import CounterSection from "./CounterSection";
 import { FaGlobe, FaStar } from "react-icons/fa";
 import RotatingSparkleButton from "./RotatingSparkleButton";
+import { Link } from "react-router";
 
 const Herosection = () => {
     return (
@@ -37,7 +38,7 @@ const Herosection = () => {
                     {/* Headline */}
                     <div className="flex flex-col md:flex-row justify-center items-center gap-4 mt-8">
                         <RotatingSparkleButton size={24} />
-                        <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-center bg-gradient-to-r from-pink-600 via-indigo-700 to-pink-600 bg-clip-text text-transparent">
+                        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-center bg-gradient-to-r from-pink-600 via-indigo-700 to-pink-600 bg-clip-text text-transparent">
                             Find Your Perfect <br />
                             <span className="text-black">Dream Home</span>
                         </h1>
@@ -66,7 +67,7 @@ const Herosection = () => {
                                     key={i}
                                     className="px-4 py-2 border border-blue-50 bg-gray-100 text-black rounded-full shadow hover:bg-white cursor-pointer"
                                 >
-                                    {label}
+                                  <a href="#properties"> {label} </a> 
                                 </span>
                             ))}
                         </div>
@@ -78,9 +79,9 @@ const Herosection = () => {
                                 placeholder="Search by location or keyword..."
                                 className="flex-1 bg-transparent outline-none text-black px-2 py-2 w-full"
                             />
-                            <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-full font-semibold hover:opacity-90 w-full sm:w-auto">
+                           <Link to="/allproperties"><button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-full font-semibold hover:opacity-90 w-full sm:w-auto">
                                 Search
-                            </button>
+                            </button></Link> 
                         </div>
                     </div>
 

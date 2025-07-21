@@ -6,6 +6,7 @@ import Swal from "sweetalert2";
 import { useNavigate } from "react-router";
 import useAxiosSecure from "../hooks/useAxiosSecure";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Helmet } from "react-helmet-async";
 
 const Wishlist = () => {
     const { user } = useContext(AuthContext);
@@ -60,8 +61,11 @@ const Wishlist = () => {
 
     return (
         <div className="p-6 min-h-screen bg-gradient-to-br">
+            <Helmet>
+                <title>Wish List | Dashboard</title>
+            </Helmet>
             <h2 className="text-3xl font-extrabold text-center text-indigo-700 mb-8">
-                ❤️ My Wishlist
+                 My Wishlist
             </h2>
 
             {wishlist.length === 0 ? (

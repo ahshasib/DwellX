@@ -60,7 +60,7 @@ export default function BrandShowcase() {
                     Join Our Network <FaArrowRight />
                 </button>
             </div>
-            <p className="text-center text-sm text-gray-500 pt-5">Start your journey with industry-leading companies today</p>
+            <p className="text-center text-sm text-gray-500 py-5">Start your journey with industry-leading companies today</p>
         </div>
     );
 }
