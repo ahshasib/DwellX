@@ -85,7 +85,8 @@ const CheckoutForm = ({offerAmount, offerId,close,onPaymentSuccess,sellerEmail})
             transactionId: result?.paymentIntent?.id,
             status: 'paid',
             date: new Date(),
-            sellerEmail: sellerEmail
+            sellerEmail: sellerEmail,
+            
         };
     
         try{

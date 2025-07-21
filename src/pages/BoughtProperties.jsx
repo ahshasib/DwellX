@@ -50,9 +50,15 @@ const BoughtProperties = () => {
             <p className="text-gray-600 mb-1">📍 Location: <span className="text-indigo-600">{offer.location}</span></p>
             <p className="text-gray-600 mb-1">👨‍💼 Agent: {offer.agentName}</p>
             <p className="text-gray-600 mb-1">💰 Offer Amount: <span className="text-green-600 font-semibold">৳{offer.offerAmount}</span></p>
-            <p className="text-gray-600 mb-3">📅 Buying Date: {offer.buyingDate}</p>
+            <p className="text-gray-600 mb-1">📅 Buying Date: {offer.buyingDate}</p>
 
-            <span className={`inline-block px-3 py-1 text-sm font-medium rounded-full 
+            {offer.status === "paid" && offer.transactionId && (
+              <p className="text-gray-600 mt-1">
+                🔁 Transaction ID: <span className="text-blue-700 font-medium">{offer.transactionId}</span>
+              </p>
+            )}
+
+            <span className={`inline-block px-3 py-1 text-sm font-medium rounded-full
               ${offer.status === 'pending' ? 'bg-yellow-200 text-yellow-700 mt-2' : ''}
               ${offer.status === 'accepted' ? 'bg-green-200 text-green-700 mt-2' : ''}
               ${offer.status === 'rejected' ? 'bg-red-200 text-red-700 mt-2' : ''}

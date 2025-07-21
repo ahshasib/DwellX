@@ -32,6 +32,10 @@ const Login = () => {
       toast.error("Password must include at least one small letter");
       return;
     }
+    // if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+    //   toast.error("Password must include at least one special character");
+    //   return;
+    // }
 
     try {
       setError("");
