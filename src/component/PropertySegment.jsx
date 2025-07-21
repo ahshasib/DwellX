@@ -7,9 +7,27 @@ import {
   FaMapMarkerAlt,
   FaArrowRight,
 } from "react-icons/fa";
-import { Link } from "react-router";
+import { Link } from "react-router"; // <-- fixed router import
 import { useQuery } from "@tanstack/react-query";
 import EmptyState from "./EmptyState";
+
+// 👇 Skeleton Loader Card
+const SkeletonCard = () => (
+  <div className="animate-pulse bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-lg p-4">
+    <div className="h-56 bg-gray-300 rounded-lg mb-4"></div>
+    <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
+    <div className="h-4 bg-gray-300 rounded w-1/2 mb-4"></div>
+    <div className="flex justify-between py-2 border-y border-gray-200">
+      <div className="h-4 w-1/4 bg-gray-300 rounded"></div>
+      <div className="h-4 w-1/4 bg-gray-300 rounded"></div>
+      <div className="h-4 w-1/4 bg-gray-300 rounded"></div>
+    </div>
+    <div className="flex justify-between items-center mt-4">
+      <div className="h-4 w-24 bg-gray-300 rounded"></div>
+      <div className="h-8 w-20 bg-gray-300 rounded-full"></div>
+    </div>
+  </div>
+);
 
 const categories = ["All Properties", "Apartments", "Villas", "Houses"];
 
@@ -29,39 +47,31 @@ const PropertySegment = () => {
 
   const [active, setActive] = useState("All Properties");
   const [visibleProperties, setVisibleProperties] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
 
-  // Initial load
   useEffect(() => {
     if (allProperties.length > 0) {
       setVisibleProperties(allProperties.slice(0, 6));
     }
   }, [allProperties]);
 
-  // Handle category change with loading simulation
   useEffect(() => {
-    setIsLoading(true);
-
-    const timeout = setTimeout(() => {
-      if (active === "All Properties") {
-        setVisibleProperties(allProperties.slice(0, 6));
-      } else {
-        const filtered = allProperties.filter(
-          (property) =>
-            property.type?.toLowerCase().trim() === active.toLowerCase().trim()
-        );
-        setVisibleProperties(filtered);
-      }
-      setIsLoading(false);
-    }, 500);
-
-    return () => clearTimeout(timeout);
+    if (active === "All Properties") {
+      setVisibleProperties(allProperties.slice(0, 6));
+    } else {
+      const filtered = allProperties.filter(
+        (property) =>
+          property.type?.toLowerCase().trim() === active.toLowerCase().trim()
+      );
+      setVisibleProperties(filtered);
+    }
   }, [active, allProperties]);
 
   if (isDataLoading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+      <div className="px-6 py-10 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <SkeletonCard key={i} />
+        ))}
       </div>
     );
   }
@@ -83,7 +93,7 @@ const PropertySegment = () => {
       />
 
       <p className="text-gray-500 text-center my-10 w-[90%] md:w-[50%] mx-auto">
-        Discover our handpicked selection of premium properties designed to  match your lifestyle needs
+        Discover our handpicked selection of premium properties designed to match your lifestyle needs
       </p>
 
       {/* Category buttons */}
@@ -103,12 +113,8 @@ const PropertySegment = () => {
         ))}
       </div>
 
-      {/* Loading Spinner */}
-      {isLoading ? (
-        <div className="flex justify-center items-center h-40">
-          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-        </div>
-      ) : visibleProperties.length === 0 ? (
+      {/* Empty State or Properties */}
+      {visibleProperties.length === 0 ? (
         <div className="text-center text-gray-500 dark:text-gray-300 text-lg py-10">
           <EmptyState />
         </div>
@@ -171,9 +177,11 @@ const PropertySegment = () => {
 
       {/* Browse All Button */}
       <div className="flex justify-center mt-16">
-      <Link to="/allproperties"> <button className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white px-8 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl shadow-blue-500/30 hover:from-blue-700 hover:via-purple-700 hover:to-indigo-700 transition-all duration-300 flex items-center justify-center gap-2">
-          Browse All Properties <FaArrowRight />
-        </button></Link>
+        <Link to="/allproperties">
+          <button className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white px-8 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl shadow-blue-500/30 hover:from-blue-700 hover:via-purple-700 hover:to-indigo-700 transition-all duration-300 flex items-center justify-center gap-2">
+            Browse All Properties <FaArrowRight />
+          </button>
+        </Link>
       </div>
       <p className="text-center text-sm text-gray-500 pt-5">
         Start your journey with industry-leading companies today

@@ -23,6 +23,7 @@ import RequestedProperties from "../pages/RequestedProperties";
 import MyReviews from "../pages/MyReviews";
 import AdminManageReviews from "../pages/AdminManageReviews";
 import MySoldProperties from "../pages/MySoldProperties";
+import DashboardLanding from "../pages/DashboardLanding";
 
 const router = createBrowserRouter([
   {
@@ -43,6 +44,12 @@ const router = createBrowserRouter([
     path: '/dashboard',
     element: <PrivateRoute><DashboardLayout /></PrivateRoute>,
     children: [
+
+
+      {
+        path: '',
+        element: <PrivateRoute><DashboardLanding /></PrivateRoute>, 
+      },
 //       // User routes
          { path: 'profile', element: <Profile />},
          { path: 'user/wishlist', element: <UserRoute><Wishlist /></UserRoute> },
@@ -51,8 +58,8 @@ const router = createBrowserRouter([
          { path: 'user/bought', element:<UserRoute><BoughtProperties /></UserRoute> },
         { path: 'user/reviews', element: <UserRoute><MyReviews /></UserRoute> },
           { path: 'user/become-seller', element: <UserRoute><BecomeSeller/></UserRoute> },
-//       { path: 'user/make-offer/:id', element: <UserRoute><MakeOffer /></UserRoute> },
-//       { path: 'user/payment/:id', element: <UserRoute><PaymentPage /></UserRoute> },
+//       
+//        { path: 'user/payment/:id', element: <UserRoute><PaymentPage /></UserRoute> },
 
 //       // Agent routes
 //       { path: 'agent/profile', element: <AgentRoute><AgentProfile /></AgentRoute> },

@@ -7,6 +7,7 @@ import {
   FaCommentDots,
   FaTimes,
   FaPaperPlane,
+  FaDollarSign,
 } from "react-icons/fa";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { AuthContext } from "../context/AuthProvider";
@@ -26,7 +27,6 @@ const PropertyDetails = () => {
   const [showModal, setShowModal] = useState(false);
   const [newReview, setNewReview] = useState("");
 
-  // Fetch property data
   const {
     data: property,
     isLoading: propertyLoading,
@@ -40,7 +40,6 @@ const PropertyDetails = () => {
     enabled: !!id,
   });
 
-  // Fetch reviews
   const {
     data: reviews = [],
     isLoading: reviewsLoading,
@@ -54,10 +53,8 @@ const PropertyDetails = () => {
     enabled: !!id,
   });
 
-  // Check wishlist status
   useEffect(() => {
     if (!property || !user) return;
-
     const checkWishlist = async () => {
       try {
         const res = await axiosSecure.get("/wishlist/check", {
@@ -74,7 +71,6 @@ const PropertyDetails = () => {
     checkWishlist();
   }, [property, user, axiosSecure]);
 
-  // Add to wishlist mutation
   const addWishlistMutation = useMutation({
     mutationFn: async () => {
       const wishlistItem = {
@@ -106,7 +102,6 @@ const PropertyDetails = () => {
     },
   });
 
-  // Submit review mutation
   const submitReviewMutation = useMutation({
     mutationFn: async () => {
       const reviewData = {
@@ -139,104 +134,120 @@ const PropertyDetails = () => {
   if (propertyError || reviewsError) return <EmptyState />;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4 md:px-20">
+    <div className="min-h-screen bg-gray-50 py-10 px-4 md:px-10">
       <Helmet>
-        <title> Property Detils | DuellX</title>
+        <title>Property Details | DuellX</title>
       </Helmet>
-      <div className="max-w-5xl mx-auto bg-white shadow-lg rounded-2xl overflow-hidden">
-        <img
-          src={property.image}
-          alt={property.title}
-          className="w-full h-80 object-cover"
-        />
 
-        <div className="p-6">
-          <div className="flex justify-between items-center mb-2">
-            <h1 className="text-2xl md:text-3xl font-bold text-indigo-700">
-              {property.title}
-            </h1>
-            <button
-              onClick={() => addWishlistMutation.mutate()}
-              disabled={wishlist || addWishlistMutation.isLoading}
-              className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition ${wishlist
-                ? "bg-red-100 text-red-600 cursor-not-allowed"
-                : "bg-indigo-100 text-indigo-600 hover:bg-indigo-200"
+      <div className="max-w-6xl mx-auto">
+        <h1 className="text-4xl font-bold text-center text-indigo-700 mb-2">
+          Property Details
+        </h1>
+        <p className="text-center text-gray-600 mb-8">
+          Explore the complete information of the property including pricing,
+          location, agent and user reviews.
+        </p>
+
+        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row">
+          <img
+            src={property.image}
+            alt={property.title}
+            className="w-full md:w-1/2 h-96 object-cover"
+          />
+
+          <div className="p-6 md:p-8 flex flex-col gap-4 md:w-1/2">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-bold text-indigo-700">
+                {property.title}
+              </h2>
+              <button
+                onClick={() => addWishlistMutation.mutate()}
+                disabled={wishlist || addWishlistMutation.isLoading}
+                className={`flex items-center gap-2 px-4 py-1 rounded-full text-sm font-medium transition ${
+                  wishlist
+                    ? "bg-red-100 text-red-600 cursor-not-allowed"
+                    : "bg-indigo-100 text-indigo-600 hover:bg-indigo-200"
                 }`}
-            >
-              <FaHeart />
-              {wishlist
-                ? "Wishlisted"
-                : addWishlistMutation.isLoading
+              >
+                <FaHeart />
+                {wishlist
+                  ? "Wishlisted"
+                  : addWishlistMutation.isLoading
                   ? "Adding..."
                   : "Add to Wishlist"}
-            </button>
-          </div>
-
-          <div className="flex items-center text-gray-600 text-sm mb-4">
-            <FaMapMarkerAlt className="mr-1" /> {property.location}
-          </div>
-
-          <p className="text-gray-700 mb-6">{property.description}</p>
-
-          <div className="text-xl font-semibold text-indigo-700 mb-2">
-            Price Range:
-          </div>
-          <p className="mb-4">
-            ${property.minPrice} -
-            ${property.maxPrice}
-          </p>
-
-          <div className="text-lg font-medium flex items-center gap-2 text-gray-600">
-            {property.agent?.image ? (
-              <img
-                src={property.agent.image}
-                alt={property.agent.name}
-                className="w-8 h-8 rounded-full object-cover"
-              />
-            ) : (
-              <FaUserAlt className="text-xl" />
-            )}
-            Agent:{" "}
-            <span className="text-indigo-700">{property.agent?.name}</span>
-          </div>
-
-          {/* Reviews */}
-          <div className="mt-10">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold text-gray-800">Reviews</h2>
-              <button
-                onClick={() => setShowModal(true)}
-                className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-full hover:bg-indigo-700 transition"
-              >
-                <FaCommentDots /> Add a Review
               </button>
             </div>
 
-            <div className="space-y-4">
-              {reviews.length > 0 ? (
-                reviews.map((review, index) => (
-                  <div key={index} className="p-4 bg-gray-100 rounded-lg">
-                    <div className="flex items-center gap-2 mb-2">
-                      {review.reviewerImage ? (
-                        <img
-                          src={review.reviewerImage}
-                          alt={review.reviewerName}
-                          className="w-6 h-6 rounded-full"
-                        />
-                      ) : (
-                        <FaUserAlt />
-                      )}
-                      <span className="font-semibold text-indigo-700">
-                        {review.reviewerName}
-                      </span>
-                    </div>
-                    <p className="text-gray-700">{review.comment}</p>
-                  </div>
-                ))
-              ) : (
-                <p className="text-gray-500">No reviews yet.</p>
-              )}
+            <div className="text-gray-600 flex items-center">
+              <FaMapMarkerAlt className="mr-2" /> {property.location}
             </div>
+
+            <p className="text-gray-700 leading-relaxed">
+              {property.description}
+            </p>
+
+            <hr className="my-2" />
+
+            <div className="text-lg font-semibold text-indigo-700 flex items-center gap-2">
+              <FaDollarSign /> ${property.minPrice} - ${property.maxPrice}
+            </div>
+
+            <div className="flex items-center gap-3">
+              {property.agent?.image ? (
+                <img
+                  src={property.agent.image}
+                  alt={property.agent.name}
+                  className="w-8 h-8 rounded-full object-cover"
+                />
+              ) : (
+                <FaUserAlt className="text-xl" />
+              )}
+              <span className="text-indigo-700 font-medium">
+                Agent: {property.agent?.name}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Reviews Section */}
+        <div className="mt-12">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-bold text-gray-800">Reviews</h2>
+            <button
+              onClick={() => setShowModal(true)}
+              className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-full hover:bg-indigo-700 transition"
+            >
+              <FaCommentDots /> Add a Review
+            </button>
+          </div>
+
+          <div className="space-y-4">
+            {reviews.length > 0 ? (
+              reviews.map((review, index) => (
+                <div
+                  key={index}
+                  className="p-4 bg-white border border-gray-200 rounded-xl shadow-sm"
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    {review.reviewerImage ? (
+                      <img
+                        src={review.reviewerImage}
+                        alt={review.reviewerName}
+                        className="w-6 h-6 rounded-full"
+                      />
+                    ) : (
+                      <FaUserAlt />
+                    )}
+                    <span className="font-semibold text-indigo-700">
+                      {review.reviewerName}
+                    </span>
+                  </div>
+                  <p className="text-gray-700">{review.comment}</p>
+                </div>
+              ))
+            ) : (
+              <p className="text-gray-500">No reviews yet.</p>
+            )}
           </div>
         </div>
       </div>
@@ -266,9 +277,7 @@ const PropertyDetails = () => {
               className="mt-4 w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition"
             >
               <FaPaperPlane className="inline mr-2" />
-              {submitReviewMutation.isLoading
-                ? "Submitting..."
-                : "Submit Review"}
+              {submitReviewMutation.isLoading ? "Submitting..." : "Submit Review"}
             </button>
           </div>
         </div>
