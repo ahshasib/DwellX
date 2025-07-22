@@ -4,6 +4,8 @@ import { AuthContext } from "../context/AuthProvider";
 import useAxiosSecure from "../hooks/useAxiosSecure";
 import Swal from "sweetalert2";
 import { Helmet } from "react-helmet-async";
+import Loading from "../component/Loading";
+import EmptyState from "../component/EmptyState";
 
 const RequestedProperties = () => {
   const { user } = useContext(AuthContext);
@@ -54,19 +56,19 @@ const RequestedProperties = () => {
     rejectMutation.mutate(offerId);
   };
 
-  if (isLoading) return <p className="text-center mt-10">Loading offers...</p>;
+  if (isLoading) return <Loading></Loading>;
 
   return (
     <div className="max-w-6xl mx-auto p-6">
       <Helmet>
         <title>Requested Properties | Dashboard</title>
       </Helmet>
-      <h1 className="text-3xl font-bold mb-6 text-indigo-700">
+      <h1 className="text-3xl text-center font-bold mb-6 text-black">
         Requested Properties (Offers)
       </h1>
 
       {offers.length === 0 ? (
-        <p className="text-gray-600 text-center">No offers found.</p>
+        <EmptyState></EmptyState>
       ) : (
         <div className="overflow-x-auto">
           <table className="table w-full border">
@@ -91,7 +93,7 @@ const RequestedProperties = () => {
                     <p>{offer.buyerName}</p>
                     <p className="text-sm text-gray-500">{offer.buyerEmail}</p>
                   </td>
-                  <td>৳{offer.offerAmount}</td>
+                  <td>${offer.offerAmount}</td>
                   <td>{offer.buyingDate}</td>
                   <td>
                     <span

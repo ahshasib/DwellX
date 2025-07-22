@@ -67,9 +67,10 @@ const MyAddedProperties = () => {
       <Helmet>
         <title>My Added Properties | Dashboard</title>
       </Helmet>
-      <h2 className="text-3xl font-bold mb-6 text-center text-indigo-600">
+      <h2 className="text-3xl font-bold mb-6 text-center text-black">
         🏠 My Added Properties
       </h2>
+      <p className="text-gray-500 text-center w-[100%] md:w-[60%] mx-auto pb-10">This section displays all the properties you have added to the platform. You can view important details like title, location, price, and status of each listing.</p>
 
       {properties.length === 0 ? (
         <p className="text-center text-gray-600">No properties added yet.</p>
@@ -90,7 +91,7 @@ const MyAddedProperties = () => {
               </h3>
               <p className="text-gray-600">Location: {property.location}</p>
               <p className="text-gray-600">
-                Price: ৳{property.minPrice} - ৳{property.maxPrice}
+                Price: ${property.minPrice} - ${property.maxPrice}
               </p>
               <p>
                 Status:{" "}
@@ -110,17 +111,17 @@ const MyAddedProperties = () => {
               <div className="flex gap-2 mt-4">
                 <button
                   onClick={() => setSelectedProperty(property)}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1 rounded"
+                  className="bg-indigo-100 hover:bg-indigo-300 text-indigo-600 px-4 py-1 rounded"
                 >
-                  ✏️ Update
+                   Update
                 </button>
 
                 <button
                   onClick={() => handleDelete(property._id)}
-                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-1 rounded"
+                  className="bg-red-100 hover:bg-red-300 text-red-700 px-4 py-1 rounded"
                   disabled={deleteMutation.isLoading}
                 >
-                  {deleteMutation.isLoading ? "Deleting..." : "🗑️ Delete"}
+                  {deleteMutation.isLoading ? "Deleting..." : " Delete"}
                 </button>
               </div>
             </div>

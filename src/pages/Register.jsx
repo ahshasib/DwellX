@@ -47,10 +47,10 @@ const Register = () => {
         setLoading(false);
         return;
       }
-      // if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-      //   toast.error("Password must include at least one special character");
-      //   return;
-      // }
+      if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+        toast.error("Password must include at least one special character");
+        return;
+      }
   
       const userCredential = await createuser(email, password);
       const user = userCredential.user;

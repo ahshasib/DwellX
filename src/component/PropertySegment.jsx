@@ -10,6 +10,8 @@ import {
 import { Link } from "react-router"; // <-- fixed router import
 import { useQuery } from "@tanstack/react-query";
 import EmptyState from "./EmptyState";
+import useRole from "../hooks/useRole";
+import Loading from "./Loading";
 
 // 👇 Skeleton Loader Card
 const SkeletonCard = () => (
@@ -47,6 +49,7 @@ const PropertySegment = () => {
 
   const [active, setActive] = useState("All Properties");
   const [visibleProperties, setVisibleProperties] = useState([]);
+  const [role, roleLoading] = useRole();
 
   useEffect(() => {
     if (allProperties.length > 0) {
@@ -65,6 +68,8 @@ const PropertySegment = () => {
       setVisibleProperties(filtered);
     }
   }, [active, allProperties]);
+
+  if (roleLoading) return <Loading />;
 
   if (isDataLoading) {
     return (
@@ -101,11 +106,10 @@ const PropertySegment = () => {
         {categories.map((category) => (
           <button
             key={category}
-            className={`px-5 py-2 rounded-full font-semibold transition-all duration-300 ${
-              active === category
+            className={`px-5 py-2 rounded-full font-semibold transition-all duration-300 ${active === category
                 ? "bg-blue-600 text-white"
                 : "bg-white shadow-md text-gray-600 border border-blue-100"
-            }`}
+              }`}
             onClick={() => setActive(category)}
           >
             {category}
@@ -161,13 +165,23 @@ const PropertySegment = () => {
 
                 <div className="flex items-center justify-between pt-4">
                   <p className="text-lg font-bold text-blue-600 dark:text-blue-400">
-                    ৳ {item.minPrice}-৳ {item.maxPrice}
+                    ${item.minPrice} - ${item.maxPrice}
                   </p>
-                  <Link to={`/property/${item._id}`}>
-                    <button className="px-4 py-1.5 text-sm bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full shadow hover:from-blue-700 hover:to-purple-700 transition-all">
+                  {(role === "seller" || role === "admin") ? (
+                    <button
+                      disabled
+                      className="px-4 py-1.5 text-sm bg-gray-300 text-gray-500 rounded-full cursor-not-allowed"
+                      title="Access restricted for admin & seller"
+                    >
                       See Details
                     </button>
-                  </Link>
+                  ) : (
+                    <Link to={`/property/${item._id}`}>
+                      <button className="px-4 py-1.5 text-sm bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full shadow hover:from-blue-700 hover:to-purple-700 transition-all">
+                        See Details
+                      </button>
+                    </Link>
+                  )}
                 </div>
               </div>
             </div>

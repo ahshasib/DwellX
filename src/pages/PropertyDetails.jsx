@@ -189,7 +189,7 @@ const PropertyDetails = () => {
             <hr className="my-2" />
 
             <div className="text-lg font-semibold text-indigo-700 flex items-center gap-2">
-              <FaDollarSign /> ${property.minPrice} - ${property.maxPrice}
+              Price: ${property.minPrice} - ${property.maxPrice}
             </div>
 
             <div className="flex items-center gap-3">

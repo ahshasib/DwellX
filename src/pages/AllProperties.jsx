@@ -11,15 +11,19 @@ import {
 } from "react-icons/fa";
 import useAxiosSecure from "../hooks/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
-import { NavLink } from "react-router"; 
+import { NavLink } from "react-router";
 import EmptyState from "../component/EmptyState";
 import { Helmet } from "react-helmet-async";
+import Loading from "../component/Loading";
+import useRole from "../hooks/useRole";
+
 
 const AllPropertiesPage = () => {
   const [layout, setLayout] = useState("grid");
   const [search, setSearch] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [sort, setSort] = useState("");
+  const [role, roleLoading] = useRole();
 
   const axiosSecure = useAxiosSecure();
 
@@ -47,15 +51,17 @@ const AllPropertiesPage = () => {
     setSearchQuery(search.trim());
   };
 
+  if (roleLoading) return <Loading />;
+
   return (
     <div className="min-h-screen py-12 px-4 mt-0 md:-mt-5 md:px-10 bg-gradient-to-br from-purple-50 via-white to-indigo-50 pb-16">
-    <Helmet>
+      <Helmet>
         <title>All Properties | Dashboard</title>
       </Helmet>
-     <div className="text-center py-2 md:py-8">
-     <h1 className="font-bold text-xl md:text-5xl">Find Your Perfect Property</h1>
-     <p className=" text-md md:2xl text-gray-600 py-2 md:py-5">Discover a curated collection of premium properties</p>
-     </div>
+      <div className="text-center py-2 md:py-8">
+        <h1 className="font-bold text-xl md:text-5xl">Find Your Perfect Property</h1>
+        <p className=" text-md md:2xl text-gray-600 py-2 md:py-5">Discover a curated collection of premium properties</p>
+      </div>
       <div className="max-w-7xl mx-auto">
         {/* Filter Bar */}
         <div className="flex flex-col md:flex-row items-center justify-between bg-white/100 border border-indigo-100 gap-4 mb-10 p-6 rounded-2xl shadow-lg bg-info-100">
@@ -95,18 +101,16 @@ const AllPropertiesPage = () => {
 
             <button
               onClick={() => setLayout("grid")}
-              className={`p-2 rounded-md border ${
-                layout === "grid" ? "bg-blue-100 text-blue-600" : ""
-              }`}
+              className={`p-2 rounded-md border ${layout === "grid" ? "bg-blue-100 text-blue-600" : ""
+                }`}
               title="Grid View"
             >
               <FaThLarge />
             </button>
             <button
               onClick={() => setLayout("list")}
-              className={`p-2 rounded-md border ${
-                layout === "list" ? "bg-blue-100 text-blue-600" : ""
-              }`}
+              className={`p-2 rounded-md border ${layout === "list" ? "bg-blue-100 text-blue-600" : ""
+                }`}
               title="List View"
             >
               <FaThList />
@@ -116,9 +120,7 @@ const AllPropertiesPage = () => {
 
         {/* Loading */}
         {(isLoading || isFetching) && (
-          <p className="text-center py-20 text-blue-600 font-semibold text-xl">
-            Loading properties...
-          </p>
+          <Loading></Loading>
         )}
 
         {/* Error */}
@@ -144,15 +146,13 @@ const AllPropertiesPage = () => {
           {data.map((item) => (
             <div
               key={item._id}
-              className={`bg-white rounded-2xl shadow-md overflow-hidden relative flex ${
-                layout === "list" ? "flex-col md:flex-row" : "flex-col"
-              }`}
+              className={`bg-white rounded-2xl shadow-md overflow-hidden relative flex ${layout === "list" ? "flex-col md:flex-row" : "flex-col"
+                }`}
             >
               {/* Image */}
               <div
-                className={`relative h-60 ${
-                  layout === "list" ? "md:w-1/2 w-full" : "w-full"
-                }`}
+                className={`relative h-60 ${layout === "list" ? "md:w-1/2 w-full" : "w-full"
+                  }`}
               >
                 <img
                   src={item.image}
@@ -199,7 +199,7 @@ const AllPropertiesPage = () => {
                   <div className="text-right">
                     <p className="text-sm text-left text-gray-500">Price</p>
                     <h4 className="text-xl font-bold text-blue-600">
-                      ৳{item.minPrice} - ৳{item.maxPrice}
+                      ${item.minPrice} - ${item.maxPrice}
                     </h4>
                   </div>
                 </div>
@@ -219,11 +219,22 @@ const AllPropertiesPage = () => {
                   </div>
                 </div>
 
-                <NavLink to={`/property/${item._id}`}>
-                  <button className="mt-4 w-full bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white py-4 rounded-xl text-sm hover:from-blue-700 hover:via-purple-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl shadow-blue-500/30">
+                {(role === "seller" || role === "admin") ? (
+                  <button
+                    disabled
+                    className="mt-4 w-full bg-gray-300 text-gray-500 py-4 rounded-xl text-sm cursor-not-allowed shadow"
+                    title="Access restricted for admin & seller"
+                  >
                     Detailed information
                   </button>
-                </NavLink>
+                ) : (
+                  <NavLink to={`/property/${item._id}`}>
+                    <button className="mt-4 w-full bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white py-4 rounded-xl text-sm hover:from-blue-700 hover:via-purple-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl shadow-blue-500/30">
+                      Detailed information
+                    </button>
+                  </NavLink>
+                )}
+
               </div>
             </div>
           ))}

@@ -9,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "../hooks/useAxiosSecure";
 import Loading from "../component/Loading";
 import EmptyState from "../component/EmptyState";
+import { Link } from "react-router";
 
 const fetchLatestReviews = async (axiosSecure) => {
   const res = await axiosSecure.get("/reviews/latest");
@@ -101,11 +102,13 @@ const TestimonialSection = () => {
 
       {/* CTA Button */}
       <div className="flex justify-center mt-20">
+        <Link to="/allproperties">
         <button className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white px-8 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl shadow-blue-500/30 hover:from-blue-700 hover:via-purple-700 hover:to-indigo-700 transition-all duration-300 flex items-center justify-center gap-3">
           <FaHeart className="text-pink-500 text-lg" />
           Share Your Experience
           <FaArrowRight />
         </button>
+        </Link>
       </div>
 
       <div className="flex items-center gap-2 text-[11px] text-center justify-center pt-5">

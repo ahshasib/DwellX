@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router';
+import { Link } from 'react-router';  
 import {
   FaHome, FaUser, FaSignInAlt, FaBullhorn,
   FaHeadset, FaInfoCircle, FaQuestionCircle, FaShieldAlt,
@@ -48,13 +48,13 @@ const Footer = () => {
 
           {/* Social Links */}
           <div className="flex gap-4">
-            <Link to="/" className="hover:scale-110 transition-all">
+            <Link to="https://www.facebook.com/" className="hover:scale-110 transition-all">
               <FaFacebook className="text-blue-600 text-xl" size={30} />
             </Link>
-            <Link to="/" className="hover:scale-110 transition-all">
+            <Link to="https://github.com/ahshasib" className="hover:scale-110 transition-all">
               <FaGithub className="text-gray-800 text-xl" size={30} />
             </Link>
-            <Link to="/" className="hover:scale-110 transition-all">
+            <Link to="https://www.linkedin.com/" className="hover:scale-110 transition-all">
               <FaLinkedin className="text-blue-700 text-xl" size={30} />
             </Link>
           </div>
@@ -69,13 +69,14 @@ const Footer = () => {
             </span>
           </h6>
           {[
-            { icon: <FaHome />, text: "Home" },
-            { icon: <FaUser />, text: "Properties" },
-            { icon: <FaSignInAlt />, text: "Login" },
-            { icon: <FaBullhorn />, text: "Advertisement" }
+            { icon: <FaHome />, text: "Home", to: "/" },
+            { icon: <FaUser />, text: "Properties", to: "/allproperties" },
+            { icon: <FaSignInAlt />, text: "Login", to: "/login" },
+            { icon: <FaBullhorn />, text: "Advertisement", to: "/dashboard" } // তোমার মূল কোডে Advertise ছিল, আমি ধরে নিলাম Dashboard এ নিয়ে যাবে
           ].map((item, i) => (
             <Link
               key={i}
+              to={item.to}
               className="relative flex items-center gap-2 group transition-all px-2 py-1 rounded overflow-hidden"
             >
               <span className="absolute inset-0 bg-gradient-to-r from-indigo-100 to-purple-100 opacity-0 group-hover:opacity-100 scale-110 transition duration-300 rounded" />
@@ -94,12 +95,13 @@ const Footer = () => {
           </h6>
           {[
             { icon: <FaHeadset />, text: "Customer Support" },
-            { icon: <FaInfoCircle />, text: "About Us" },
+            { icon: <FaInfoCircle />, text: "About Us", to: "/aboutUs" },
             { icon: <FaQuestionCircle />, text: "FAQs" },
             { icon: <FaShieldAlt />, text: "Privacy Policy" }
           ].map((item, i) => (
             <Link
               key={i}
+              to={item.to || '#'}
               className="relative flex items-center gap-2 group transition-all px-2 py-1 rounded overflow-hidden"
             >
               <span className="absolute inset-0 bg-gradient-to-r from-indigo-100 to-purple-100 opacity-0 group-hover:opacity-100 scale-110 transition duration-300 rounded" />
@@ -123,15 +125,14 @@ const Footer = () => {
             { icon: <FaPhoneAlt />, text: "+8801959277169" },
             { icon: <FaEnvelope />, text: "ahshasibul6@gmail.com" }
           ].map((item, i) => (
-            <Link
+            <span
               key={i}
-              className="relative flex items-center gap-2 group transition-all px-2 py-1 rounded overflow-hidden"
+              className="relative flex items-center gap-2 px-2 py-1 rounded"
             >
-              <span className="absolute inset-0 bg-gradient-to-r from-indigo-100 to-purple-100 opacity-0 group-hover:opacity-100 scale-110 transition duration-300 rounded" />
-              <span className="relative z-10 flex items-center gap-2 group-hover:text-indigo-600 transition-all">
+              <span className="flex items-center gap-2 text-gray-500">
                 {item.icon} <span>{item.text}</span>
               </span>
-            </Link>
+            </span>
           ))}
         </nav>
       </footer>

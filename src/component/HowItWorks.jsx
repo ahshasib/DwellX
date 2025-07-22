@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { FaSearch, FaCalendarAlt, FaFileAlt, FaArrowRight, FaCheck, FaCheckCircle } from "react-icons/fa";
+import { Link } from "react-router";
 
 const steps = [
     {
@@ -105,9 +106,11 @@ const HowItWorks = () => {
                 ))}
             </div>
             <div className="flex justify-center mt-20">
-                <button className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white px-8 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl shadow-blue-500/30 hover:from-blue-700 hover:via-purple-700 hover:to-indigo-700 transition-all duration-300 flex items-center justify-center gap-2">
+               <Link to="/allproperties">
+               <button className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white px-8 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl shadow-blue-500/30 hover:from-blue-700 hover:via-purple-700 hover:to-indigo-700 transition-all duration-300 flex items-center justify-center gap-2">
                     Join Our Network <FaArrowRight />
                 </button>
+               </Link>
                 
             </div>
             <div className="flex items-center gap-2 text-[11px] text-center justify-center pt-5">

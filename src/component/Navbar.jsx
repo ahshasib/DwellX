@@ -2,7 +2,7 @@ import React, { use } from 'react'
 import { Link, NavLink } from 'react-router'
 import Swal from 'sweetalert2'
 import ThemeToggle from './ThemeToggle'
-import { FaBars, FaBuilding, FaHome, FaTachometerAlt, FaUserCircle } from 'react-icons/fa'
+import { FaBars, FaBuilding, FaHome, FaRegAddressCard, FaTachometerAlt, FaUserCircle } from 'react-icons/fa'
 import { AuthContext } from './../context/AuthProvider'
 import RotatingSparkleButton from './RotatingSparkleButton'
 
@@ -36,6 +36,13 @@ const Navbar = () => {
         <NavLink to="/allproperties" className="font-semibold text-gray-600 hover:text-indigo-600 transition-all flex items-center gap-1">
           <FaBuilding /> Properties
         </NavLink>
+
+      </li>
+      <li>
+        <NavLink to="/aboutUs" className="font-semibold text-gray-600 hover:text-indigo-600 transition-all flex items-center gap-1">
+        <FaRegAddressCard /> AboutUS
+        </NavLink>
+        
       </li>
       {user && (
         <li>

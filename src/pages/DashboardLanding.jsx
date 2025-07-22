@@ -4,6 +4,7 @@ import { Link } from "react-router";
 import { motion } from "framer-motion";
 import useRole from "../hooks/useRole";
 import SellerSummary from "./SellerSummary";
+import BuyerSummaryPage from "./BuyerSummaryPage";
 
 const DashboardLanding = () => {
   const [role, roleLoading] = useRole();
@@ -41,6 +42,7 @@ const DashboardLanding = () => {
 
   let links = [];
   let showSellerSummary = false;
+  let showBuyerSummary = false;
 
   if (role === "admin") {
     links = adminLinks;
@@ -49,6 +51,7 @@ const DashboardLanding = () => {
     showSellerSummary = true;
   } else {
     links = userLinks;
+    showBuyerSummary = true;
   }
 
   return (
@@ -67,6 +70,15 @@ const DashboardLanding = () => {
           <SellerSummary userEmail={user?.email} />
         </div>
       )}
+
+        {
+          showBuyerSummary && (
+            <div className="w-full mb-12">
+          <BuyerSummaryPage userEmail={user?.email} />
+        </div>
+          )
+        }
+
 
       <motion.div
         className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl w-full"

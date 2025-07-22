@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 @tailwind base;
 @tailwind components;
@@ -9,6 +10,13 @@
     font-style: normal;
   }
 
+  /* font */
+  .great-vibes-regular {
+    font-family: "Great Vibes", cursive;
+    font-weight: 400;
+    font-style: normal;
+  }
+  
   
 .StripeElement,
 .StripeElementIdeal,
@@ -52,6 +60,57 @@
   color: white;
   
 }
+
+/* Add this to your global CSS (index.css or App.css) */
+
+.perspective {
+  perspective: 1000px;
+}
+
+.card-wrapper {
+  position: relative;
+  height: 300px;
+}
+
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.8s ease;
+}
+
+/* Flip vertically (X axis) instead of Y axis */
+.card-wrapper:hover .card-inner {
+  transform: rotateX(180deg);
+}
+
+.card-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  overflow: hidden;
+  border-radius: 1.5rem;
+}
+
+/* Front: glass and inner indigo-violet shadow */
+.card-front {
+  z-index: 2;
+  transform: rotateX(0deg);
+  box-shadow: inset 0 0 30px rgba(128, 90, 213, 0.4), inset 0 0 20px rgba(79, 70, 229, 0.3);
+}
+
+/* Back: gradient background and flipped */
+.card-back {
+  transform: rotateX(180deg);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+
 
 html {
   scroll-behavior: smooth;

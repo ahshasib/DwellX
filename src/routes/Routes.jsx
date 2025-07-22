@@ -24,6 +24,7 @@ import MyReviews from "../pages/MyReviews";
 import AdminManageReviews from "../pages/AdminManageReviews";
 import MySoldProperties from "../pages/MySoldProperties";
 import DashboardLanding from "../pages/DashboardLanding";
+import AboutUs from "../pages/AboutUs";
 
 const router = createBrowserRouter([
   {
@@ -38,6 +39,7 @@ const router = createBrowserRouter([
       { path: '/property/:id', element:<PrivateRoute> <UserRoute><PropertyDetails /></UserRoute></PrivateRoute> },
       { path: '/login', element: <Login /> },
       { path: '/register', element: <Register /> },
+      {path:'/aboutUs', element: <AboutUs></AboutUs>}
     ],
   },
   {

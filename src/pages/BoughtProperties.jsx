@@ -5,6 +5,7 @@ import useAxiosSecure from "../hooks/useAxiosSecure";
 import PaymentModal from "../component/PaymentModal";
 import { useQuery } from "@tanstack/react-query";
 import { Helmet } from "react-helmet-async";
+import EmptyState from './../component/EmptyState';
 
 const BoughtProperties = () => {
   const { user } = useContext(AuthContext);
@@ -30,10 +31,7 @@ const BoughtProperties = () => {
 
   if (offers.length === 0) {
     return (
-      <div className="text-center py-20">
-        <h2 className="text-2xl font-semibold text-gray-600">No properties bought yet!</h2>
-        <p className="text-gray-400 mt-2">Once you make an offer, it will appear here.</p>
-      </div>
+    <EmptyState></EmptyState>
     );
   }
 
@@ -49,7 +47,7 @@ const BoughtProperties = () => {
             <h3 className="text-xl font-bold text-gray-800 mb-2">{offer.title}</h3>
             <p className="text-gray-600 mb-1">📍 Location: <span className="text-indigo-600">{offer.location}</span></p>
             <p className="text-gray-600 mb-1">👨‍💼 Agent: {offer.agentName}</p>
-            <p className="text-gray-600 mb-1">💰 Offer Amount: <span className="text-green-600 font-semibold">৳{offer.offerAmount}</span></p>
+            <p className="text-gray-600 mb-1">💰 Offer Amount: <span className="text-green-600 font-semibold">${offer.offerAmount}</span></p>
             <p className="text-gray-600 mb-1">📅 Buying Date: {offer.buyingDate}</p>
 
             {offer.status === "paid" && offer.transactionId && (
