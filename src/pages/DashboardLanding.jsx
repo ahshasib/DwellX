@@ -3,6 +3,7 @@ import { AuthContext } from "../context/AuthProvider";
 import { Link } from "react-router";
 import { motion } from "framer-motion";
 import useRole from "../hooks/useRole";
+import SellerSummary from "./SellerSummary";
 
 const DashboardLanding = () => {
   const [role, roleLoading] = useRole();
@@ -39,9 +40,16 @@ const DashboardLanding = () => {
   ];
 
   let links = [];
-  if (role === "admin") links = adminLinks;
-  else if (role === "seller") links = agentLinks;
-  else links = userLinks;
+  let showSellerSummary = false;
+
+  if (role === "admin") {
+    links = adminLinks;
+  } else if (role === "seller") {
+    links = agentLinks;
+    showSellerSummary = true;
+  } else {
+    links = userLinks;
+  }
 
   return (
     <div className="min-h-[80vh] flex flex-col items-center justify-center px-6">
@@ -53,6 +61,12 @@ const DashboardLanding = () => {
       >
         Welcome to your Dashboard, {user?.displayName?.split(" ")[0]}!
       </motion.h2>
+
+      {showSellerSummary && (
+        <div className="w-full mb-12">
+          <SellerSummary userEmail={user?.email} />
+        </div>
+      )}
 
       <motion.div
         className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl w-full"

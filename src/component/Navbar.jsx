@@ -64,7 +64,7 @@ const Navbar = () => {
                 <RotatingSparkleButton size={16} />
               </div>
             </div>
-            <div className="leading-tight hidden sm:block">
+            <div className="leading-tight ">
               <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent transition-all duration-500">
                 DuellX
               </h1>

@@ -10,7 +10,7 @@ const Herosection = () => {
         <div className="h-screen w-full mt-0 md:-mt-7">
 
             {/* Slide */}
-            <div className="relative min-h-screen w-full overflow-hidden">
+            <div className="relative min-h-screen w-full overflow-hidden ">
                 <img
                     src="./b16.png"
                     alt="Luxury House"
@@ -18,6 +18,8 @@ const Herosection = () => {
                 />
 
                 {/* Overlays */}
+                
+                
                 <div className="absolute inset-0 bg-gray-400 opacity-5 pointer-events-none" />
                 <div className="absolute top-0 left-0 h-full w-1/3 bg-gradient-to-r from-pink-200/60 via-transparent to-transparent z-10 pointer-events-none" />
                 <div className="absolute top-0 right-0 h-full w-1/3 bg-gradient-to-l from-blue-200/60 via-transparent to-transparent z-10 pointer-events-none" />
@@ -36,8 +38,8 @@ const Herosection = () => {
                     </span>
 
                     {/* Headline */}
-                    <div className="flex flex-col md:flex-row justify-center items-center gap-4 mt-8">
-                        <RotatingSparkleButton size={24} />
+                    <div className="flex md:flex-row justify-center gap-4 mt-8">
+                        <RotatingSparkleButton size={24}/>
                         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-center bg-gradient-to-r from-pink-600 via-indigo-700 to-pink-600 bg-clip-text text-transparent">
                             Find Your Perfect <br />
                             <span className="text-black">Dream Home</span>

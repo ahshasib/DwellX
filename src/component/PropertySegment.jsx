@@ -83,7 +83,7 @@ const PropertySegment = () => {
   return (
     <div className="px-6 py-10 max-w-7xl mx-auto dark:bg-gray-900">
       <p className="text-indigo-500 text-center pb-3">Explore Properties</p>
-      <h2 className="text-2xl md:text-5xl font-bold text-center mb-4 text-gray-800 dark:text-white">
+      <h2 className="text-2xl md:text-5xl font-bold text-center mb-4 dark:text-white">
         Explore Our Properties
       </h2>
 

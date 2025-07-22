@@ -11,8 +11,8 @@ const ManageUsers = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [newRole, setNewRole] = useState("customer");
 
-  // ✅ Fetch users using useQuery
-  const { data: users = [], isLoading } = useQuery({
+  // ✅ Fetch users
+  const { data: users = [], isLoading, refetch } = useQuery({
     queryKey: ["all-users"],
     queryFn: async () => {
       const res = await axiosSecure.get("/all-users");
@@ -20,12 +20,10 @@ const ManageUsers = () => {
     },
   });
 
-  // ✅ Mutation for updating user role
+  // ✅ Update Role Mutation
   const updateRoleMutation = useMutation({
     mutationFn: async ({ email, role }) => {
-      const res = await axiosSecure.patch(`/user/role/update/${email}`, {
-        role,
-      });
+      const res = await axiosSecure.patch(`/user/role/update/${email}`, { role });
       return res.data;
     },
     onSuccess: (data, variables) => {
@@ -39,6 +37,48 @@ const ManageUsers = () => {
       Swal.fire("Error", "Failed to update role", "error");
     },
   });
+
+  // ✅ Fraud Status Mutation
+  const markFraudMutation = useMutation({
+    mutationFn: async (email) => {
+      const res = await axiosSecure.patch(`/user/status/fraud/${email}`);
+      return res.data;
+    },
+    onSuccess: () => {
+      Swal.fire("Marked", "Seller marked as fraud", "warning");
+      queryClient.invalidateQueries(["all-users"]);
+    },
+    onError: () => {
+      Swal.fire("Error", "Only sellers can be marked as fraud", "error");
+    },
+  });
+
+  // ✅ Delete User Mutation
+  const handleDelete = async (email) => {
+    const confirm = await Swal.fire({
+      title: "Are you sure?",
+      text: "You are about to delete this user permanently.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (confirm.isConfirmed) {
+      try {
+        const res = await axiosSecure.delete(`/delete-user/${email}`);
+        if (res.data.success) {
+          Swal.fire("Deleted!", "User has been deleted.", "success");
+          refetch();
+        } else {
+          Swal.fire("Failed!", res.data.message || "Deletion failed.", "error");
+        }
+      } catch (error) {
+        Swal.fire("Error", error.response?.data?.message || "Error deleting user.", "error");
+      }
+    }
+  };
 
   const openModal = (user) => {
     setSelectedUser(user);
@@ -56,6 +96,7 @@ const ManageUsers = () => {
       <Helmet>
         <title>Manage Users | Dashboard</title>
       </Helmet>
+
       <h2 className="text-2xl font-bold mb-6 text-center text-indigo-600">
         Manage Users
       </h2>
@@ -70,9 +111,9 @@ const ManageUsers = () => {
                 <th>#</th>
                 <th>Name</th>
                 <th>Email</th>
-                <th>Current Role</th>
+                <th>Role</th>
                 <th>Status</th>
-                <th>Action</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -93,22 +134,41 @@ const ManageUsers = () => {
                           ? "bg-yellow-200 text-yellow-800"
                           : user.status === "verified"
                             ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
+                            : user.status === "fraud"
+                              ? "bg-red-200 text-red-800"
+                              : "bg-gray-100 text-gray-800"
                         }`}
                     >
                       {user.status || "Unverified"}
                     </span>
                   </td>
-                  <td>
+                  <td className="flex flex-wrap gap-2">
                     <button
                       className="btn btn-sm btn-outline btn-primary"
                       onClick={() => openModal(user)}
                     >
                       Change Role
                     </button>
+
+                    {user.role === "seller" && user.status !== "fraud" && (
+                      <button
+                        className="btn btn-sm btn-outline btn-warning"
+                        onClick={() => handleMarkFraud(user.email)}
+                      >
+                        Mark Fraud
+                      </button>
+                    )}
+
+                    <button
+                      onClick={() => handleDelete(user.email)}
+                      className="btn btn-sm btn-error text-white"
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
               ))}
+
               {users.length === 0 && (
                 <tr>
                   <td colSpan="6" className="text-center py-4 text-gray-500">
@@ -121,7 +181,7 @@ const ManageUsers = () => {
         </div>
       )}
 
-      {/* Modal */}
+      {/* Role Modal */}
       <dialog id="roleModal" className="modal">
         <div className="modal-box">
           <h3 className="font-bold text-lg mb-4">Change Role</h3>
