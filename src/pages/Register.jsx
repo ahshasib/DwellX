@@ -99,7 +99,7 @@ const Register = () => {
     
     <div className=" min-h-screen bg-gradient-to-br from-blue-100 to-purple-200 flex flex-col-reverse lg:flex-row justify-center items-center p-4 ">
        <Helmet>
-    <title>Register| MarathonMate</title>
+    <title>Register| DwellX</title>
   </Helmet>
       <ToastContainer />
      {/* Left side - Form */}

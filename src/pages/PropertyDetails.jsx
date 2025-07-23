@@ -136,7 +136,7 @@ const PropertyDetails = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4 md:px-10">
       <Helmet>
-        <title>Property Details | DuellX</title>
+        <title>Property Details | DwellX</title>
       </Helmet>
 
       <div className="max-w-6xl mx-auto">

@@ -73,7 +73,7 @@ const Navbar = () => {
             </div>
             <div className="leading-tight ">
               <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent transition-all duration-500">
-                DuellX
+                DwellX
               </h1>
               <span className="text-[11px] text-gray-500 block -mt-1">we are best</span>
             </div>

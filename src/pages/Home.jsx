@@ -12,7 +12,7 @@ const Home = () => {
   return (
     <div>
       <Helmet>
-        <title>Home | DuellX</title>
+        <title>Home | DwellX</title>
       </Helmet>
       <Herosection></Herosection>
       <section className='bg-gradient-to-br from-purple-50 via-white to-indigo-50 pt-40 md:py-16'>

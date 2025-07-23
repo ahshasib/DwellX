@@ -110,7 +110,7 @@ const Login = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 to-purple-200 flex flex-col-reverse lg:flex-row justify-center items-center p-4">
       <Helmet>
-        <title>Login | MarathonMate</title>
+        <title>Login | DwellX</title>
       </Helmet>
       <ToastContainer />
 

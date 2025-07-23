@@ -17,8 +17,10 @@ const BuyerSummaryPage = ({ userEmail }) => {
     },
     enabled: !!userEmail,
   });
-
-  if (isLoading) return <p className="text-center text-lg mt-10">Loading...</p>;
+  
+  if (isLoading || !summary) {
+    return <p className="text-center text-lg mt-10">Loading...</p>;
+  }
 
   const chartData = [
     { name: "Properties Bought", value: summary.totalBought },

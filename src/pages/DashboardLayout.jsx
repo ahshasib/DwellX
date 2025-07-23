@@ -10,6 +10,7 @@ import useRole from "../hooks/useRole";
 import Loading from "../component/Loading";
 import RotatingSparkleButton from "../component/RotatingSparkleButton";
 import { FaUser, FaHome } from "react-icons/fa";
+import { Helmet } from "react-helmet-async";
 
 const DashboardLayout = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -23,6 +24,9 @@ const DashboardLayout = () => {
 
     return (
         <div className="min-h-screen flex flex-col md:flex-row relative">
+            <Helmet>
+                <title>Dashboard | DwellX</title>
+            </Helmet>
 
             {/* Mobile Menu Button */}
             <button
@@ -53,7 +57,7 @@ const DashboardLayout = () => {
                             </div>
                             <div className="leading-tight hidden sm:block">
                                 <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent transition-all duration-500">
-                                    DuellX
+                                    DwellX
                                 </h1>
                                 <span className="text-[11px] text-gray-500 block -mt-1">we are best</span>
                             </div>

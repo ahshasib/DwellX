@@ -35,7 +35,7 @@ const Footer = () => {
             </div>
             <div>
               <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent transition-all duration-500">
-                DuellX
+                DwellX
               </h1>
               <p className="text-[11px] text-gray-400 -mt-1">we are best</p>
             </div>

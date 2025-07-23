@@ -1,9 +1,13 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Helmet } from 'react-helmet-async';
 
 const AboutUs = () => {
   return (
     <div className="mt-0 md:-mt-3 px-6 py-16 md:px-28 bg-gradient-to-br from-indigo-50 to-violet-50 min-h-screen">
+      <Helmet>
+        <title>About Us | DwellX</title>
+      </Helmet>
       <motion.div
         initial={{ opacity: 0, y: 60 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -11,9 +15,9 @@ const AboutUs = () => {
         viewport={{ once: true }}
         className="max-w-4xl mx-auto text-center"
       >
-        <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent transition-all duration-500 mb-6">About DuellX</h1>
+        <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent transition-all duration-500 mb-6">About DwellX</h1>
         <p className="text-gray-700 text-lg leading-relaxed italic">
-          At <span className="font-semibold text-indigo-600">DuellX</span>, we are redefining the way properties are bought and sold. Our mission is to empower individuals and agents by offering a seamless, transparent, and efficient real estate platform. Whether you're a buyer seeking the perfect home or a seller aiming to reach a wide audience, DuellX bridges the gap with smart tools, verified listings, and user-friendly features. <br /><br />
+          At <span className="font-semibold text-indigo-600">DwellX</span>, we are redefining the way properties are bought and sold. Our mission is to empower individuals and agents by offering a seamless, transparent, and efficient real estate platform. Whether you're a buyer seeking the perfect home or a seller aiming to reach a wide audience, DuellX bridges the gap with smart tools, verified listings, and user-friendly features. <br /><br />
           With a team of passionate innovators and real estate professionals, we combine technology with trust to ensure every transaction is smooth and secure. Our platform not only showcases properties but also tells the story behind each listing — helping you make confident and informed decisions. Join DuellX and experience the future of property trading today.
         </p>
       </motion.div>
