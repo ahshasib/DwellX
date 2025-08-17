@@ -86,7 +86,7 @@ const DashboardLayout = () => {
                         {role === 'admin' && <AdminDashboard />}
                     </ul>
 
-                    <ul className=" w-full py-5 absolute bottom-0 border-t-2 border-gray-300">
+                    <ul className="w-full py-5 absolute bottom-0 border-t-2 border-gray-300">
                         <li>
                             <Link
                                 to="/dashboard/profile"

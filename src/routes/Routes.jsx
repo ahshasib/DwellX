@@ -35,7 +35,7 @@ const router = createBrowserRouter([
         element: <Home />,
         
        },
-      { path: '/allproperties', element: <PrivateRoute><AllProperties /></PrivateRoute> },
+      { path: '/allproperties', element: <AllProperties /> },
       { path: '/property/:id', element:<PrivateRoute> <UserRoute><PropertyDetails /></UserRoute></PrivateRoute> },
       { path: '/login', element: <Login /> },
       { path: '/register', element: <Register /> },

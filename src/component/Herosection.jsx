@@ -11,11 +11,12 @@ const Herosection = () => {
     <div className="h-screen w-full mt-0 md:-mt-7">
       {/* Slide */}
       <div className="relative min-h-screen w-full overflow-hidden ">
-        <img
-          src="./b5.png"
-          alt="Luxury House"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
+      <img
+  src="./b6.jpg"
+  alt="Luxury House"
+  className="absolute bottom-0 left-0 w-full h-auto object-bottom"
+/>
+
 
         {/* Overlays */}
         <div className="absolute inset-0 bg-gray-400 opacity-5 pointer-events-none" />
