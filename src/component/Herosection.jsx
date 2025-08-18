@@ -11,18 +11,23 @@ const Herosection = () => {
     <div className="h-screen w-full mt-0 md:-mt-7">
       {/* Slide */}
       <div className="relative min-h-screen w-full overflow-hidden ">
-      <img
-  src="./b6.jpg"
-  alt="Luxury House"
-  className="absolute bottom-0 left-0 w-full h-auto object-bottom"
-/>
+        <img
+          src="./b4.jpg"
+          alt="Luxury House"
+          className="absolute bottom-0 left-0 w-full h-[60vh] object-bottom"
+        />
 
 
         {/* Overlays */}
-        <div className="absolute inset-0 bg-gray-400 opacity-5 pointer-events-none" />
-        <div className="absolute top-0 left-0 h-full w-1/3 bg-gradient-to-r from-pink-200/60 via-transparent to-transparent z-10 pointer-events-none" />
-        <div className="absolute top-0 right-0 h-full w-1/3 bg-gradient-to-l from-blue-200/60 via-transparent to-transparent z-10 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-full h-[40%] bg-gradient-to-t from-gray-900/20 via-transparent to-transparent z-10 pointer-events-none" />
+        {/* Animated Glow Overlays */}
+        <div className="absolute inset-0 flex justify-between pointer-events-none">
+          {/* Left Glow */}
+          <div className="glow-effect absolute top-1/4 left-0 w-72 h-72 bg-pink-300/40 rounded-full blur-3xl"></div>
+
+          {/* Right Glow */}
+          <div className="glow-effect absolute top-1/4 right-0 w-72 h-72 bg-blue-300/40 rounded-full blur-3xl"></div>
+        </div>
+
 
         {/* Main Content */}
         <motion.div
@@ -83,8 +88,10 @@ const Herosection = () => {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.9, duration: 0.6 }}
-            className="mt-12 w-full max-w-4xl bg-white rounded-3xl py-8 px-4 sm:px-6 md:px-10 shadow-2xl"
+            className="mt-12 w-full max-w-4xl bg-white rounded-3xl py-8 px-4 sm:px-6 md:px-10 
+             shadow-lg ring-2 ring-violet-100 ring-offset-2"
           >
+
             {/* Category Buttons */}
             <div className="flex flex-wrap justify-center gap-3 mb-6">
               {["🏢 Apartments", "🏠 Houses", "🏡 Villas", "🛏️ Studios"].map(
@@ -100,7 +107,7 @@ const Herosection = () => {
             </div>
 
             {/* Search */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 border border-gray-200 bg-white/90 rounded-full shadow-md px-4 py-3">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 border border-gray-200 bg-white/90 rounded-full shadow-md shadow-violet-100 px-4 py-3">
               <input
                 type="text"
                 placeholder="Search by location or keyword..."

@@ -7,7 +7,6 @@ import {
   FaCommentDots,
   FaTimes,
   FaPaperPlane,
-  FaDollarSign,
 } from "react-icons/fa";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { AuthContext } from "../context/AuthProvider";
@@ -15,6 +14,7 @@ import useAxiosSecure from "../hooks/useAxiosSecure";
 import Loading from "../component/Loading";
 import EmptyState from "../component/EmptyState";
 import { Helmet } from "react-helmet-async";
+import Slider from "react-slick"; // small card slider
 
 const PropertyDetails = () => {
   const { id } = useParams();
@@ -53,82 +53,36 @@ const PropertyDetails = () => {
     enabled: !!id,
   });
 
-  useEffect(() => {
-    if (!property || !user) return;
-    const checkWishlist = async () => {
-      try {
-        const res = await axiosSecure.get("/wishlist/check", {
-          params: {
-            propertyId: property._id,
-            userEmail: user.email,
-          },
-        });
-        setWishlist(res.data.exists);
-      } catch (err) {
-        console.error("Wishlist check failed:", err);
-      }
-    };
-    checkWishlist();
-  }, [property, user, axiosSecure]);
+  // Dummy more properties (carousel)
+  const moreProperties = [
+    {
+      id: 1,
+      title: "Luxury Apartment",
+      image: "https://source.unsplash.com/400x250/?apartment",
+      location: "Dhaka, Bangladesh",
+      price: "$1200",
+    },
+    {
+      id: 2,
+      title: "Modern Villa",
+      image: "https://source.unsplash.com/400x250/?villa",
+      location: "Cox’s Bazar",
+      price: "$2500",
+    },
+    {
+      id: 3,
+      title: "Commercial Office",
+      image: "https://source.unsplash.com/400x250/?office",
+      location: "Chittagong",
+      price: "$1800",
+    },
+  ];
 
-  const addWishlistMutation = useMutation({
-    mutationFn: async () => {
-      const wishlistItem = {
-        propertyId: property._id,
-        title: property.title,
-        image: property.image,
-        location: property.location,
-        status: property.status,
-        maxPrice: property.maxPrice,
-        minPrice: property.minPrice,
-        userEmail: user.email,
-        addedAt: new Date(),
-        agentName: property.agent?.name || "",
-        agentEmail: property.agent?.email || "",
-        agentImage: property.agent?.image || "",
-      };
-      return axiosSecure.post("/wishlist", wishlistItem);
-    },
-    onSuccess: () => {
-      setWishlist(true);
-      navigate("/dashboard/user/wishlist");
-    },
-    onError: (error) => {
-      if (error.response?.status === 409) {
-        setWishlist(true);
-      } else {
-        console.error("Wishlist failed:", error);
-      }
-    },
-  });
-
-  const submitReviewMutation = useMutation({
-    mutationFn: async () => {
-      const reviewData = {
-        propertyId: property._id,
-        propertyTitle: property.title,
-        agentName: property.agent?.name || "",
-        reviewerEmail: user.email,
-        reviewerName: user.displayName,
-        reviewerImage: user.photoURL || "",
-        comment: newReview,
-        createdAt: new Date(),
-      };
-      const res = await axiosSecure.post("/reviews", reviewData);
-      return res.data;
-    },
-    onSuccess: (newReviewData) => {
-      queryClient.setQueryData(["reviews", id], (old = []) => [
-        newReviewData,
-        ...old,
-      ]);
-      setNewReview("");
-      setShowModal(false);
-    },
-    onError: (err) => {
-      console.error("Review submission error:", err);
-    },
-  });
+  // Ads Section dummy
+  const ads = [
+    "https://source.unsplash.com/300x250/?real-estate",
+    "https://source.unsplash.com/300x250/?interior",
+  ];
 
   if (propertyLoading || reviewsLoading) return <Loading />;
   if (propertyError || reviewsError) return <EmptyState />;
@@ -139,115 +93,155 @@ const PropertyDetails = () => {
         <title>Property Details | DwellX</title>
       </Helmet>
 
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-bold text-center text-indigo-700 mb-2">
-          Property Details
-        </h1>
-        <p className="text-center text-gray-600 mb-8">
-          Explore the complete information of the property including pricing,
-          location, agent and user reviews.
-        </p>
-
-        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* LEFT SIDE IMAGE + ADS */}
+        <div className="space-y-6">
           <img
             src={property.image}
             alt={property.title}
-            className="w-full md:w-1/2 h-96 object-cover"
+            className="w-full h-[500px] object-cover rounded-2xl shadow-lg"
           />
-
-          <div className="p-6 md:p-8 flex flex-col gap-4 md:w-1/2">
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-indigo-700">
-                {property.title}
-              </h2>
-              <button
-                onClick={() => addWishlistMutation.mutate()}
-                disabled={wishlist || addWishlistMutation.isLoading}
-                className={`flex items-center gap-2 px-4 py-1 rounded-full text-sm font-medium transition ${
-                  wishlist
-                    ? "bg-red-100 text-red-600 cursor-not-allowed"
-                    : "bg-indigo-100 text-indigo-600 hover:bg-indigo-200"
-                }`}
-              >
-                <FaHeart />
-                {wishlist
-                  ? "Wishlisted"
-                  : addWishlistMutation.isLoading
-                  ? "Adding..."
-                  : "Add to Wishlist"}
-              </button>
-            </div>
-
-            <div className="text-gray-600 flex items-center">
-              <FaMapMarkerAlt className="mr-2" /> {property.location}
-            </div>
-
-            <p className="text-gray-700 leading-relaxed">
-              {property.description}
-            </p>
-
-            <hr className="my-2" />
-
-            <div className="text-lg font-semibold text-indigo-700 flex items-center gap-2">
-              Price: ${property.minPrice} - ${property.maxPrice}
-            </div>
-
-            <div className="flex items-center gap-3">
-              {property.agent?.image ? (
-                <img
-                  src={property.agent.image}
-                  alt={property.agent.name}
-                  className="w-8 h-8 rounded-full object-cover"
-                />
-              ) : (
-                <FaUserAlt className="text-xl" />
-              )}
-              <span className="text-indigo-700 font-medium">
-                Agent: {property.agent?.name}
-              </span>
-            </div>
+          {/* Ads */}
+          <div className="space-y-4">
+            {ads.map((ad, idx) => (
+              <img
+                key={idx}
+                src={ad}
+                alt="Advertisement"
+                className="w-full rounded-xl shadow-md"
+              />
+            ))}
           </div>
         </div>
 
-        {/* Reviews Section */}
-        <div className="mt-12">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold text-gray-800">Reviews</h2>
+        {/* RIGHT SIDE DETAILS */}
+        <div className="lg:col-span-2 bg-white rounded-2xl shadow-lg p-8">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-3xl font-bold text-indigo-700">
+              {property.title}
+            </h2>
             <button
-              onClick={() => setShowModal(true)}
-              className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-full hover:bg-indigo-700 transition"
+              disabled={wishlist}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition ${
+                wishlist
+                  ? "bg-red-100 text-red-600"
+                  : "bg-indigo-100 text-indigo-600 hover:bg-indigo-200"
+              }`}
             >
-              <FaCommentDots /> Add a Review
+              <FaHeart />
+              {wishlist ? "Wishlisted" : "Add to Wishlist"}
             </button>
           </div>
 
-          <div className="space-y-4">
-            {reviews.length > 0 ? (
-              reviews.map((review, index) => (
-                <div
-                  key={index}
-                  className="p-4 bg-white border border-gray-200 rounded-xl shadow-sm"
-                >
-                  <div className="flex items-center gap-2 mb-2">
-                    {review.reviewerImage ? (
-                      <img
-                        src={review.reviewerImage}
-                        alt={review.reviewerName}
-                        className="w-6 h-6 rounded-full"
-                      />
-                    ) : (
-                      <FaUserAlt />
-                    )}
-                    <span className="font-semibold text-indigo-700">
-                      {review.reviewerName}
-                    </span>
-                  </div>
-                  <p className="text-gray-700">{review.comment}</p>
-                </div>
-              ))
+          <div className="text-gray-600 flex items-center mb-4">
+            <FaMapMarkerAlt className="mr-2" /> {property.location}
+          </div>
+
+          <p className="text-gray-700 leading-relaxed mb-4">
+            {property.description}
+          </p>
+
+          <div className="text-lg font-semibold text-indigo-700 mb-3">
+            Price: ${property.minPrice} - ${property.maxPrice}
+          </div>
+
+          {/* Features */}
+          <div className="grid grid-cols-2 gap-4 text-sm text-gray-600 mb-6">
+            <p>🛏 Bedrooms: 3</p>
+            <p>🛁 Bathrooms: 2</p>
+            <p>📐 Area: 1500 sqft</p>
+            <p>🏠 Furnished: Yes</p>
+          </div>
+
+          {/* Agent Info */}
+          <div className="flex items-center gap-3 mb-6">
+            {property.agent?.image ? (
+              <img
+                src={property.agent.image}
+                alt={property.agent.name}
+                className="w-10 h-10 rounded-full object-cover"
+              />
             ) : (
-              <p className="text-gray-500">No reviews yet.</p>
+              <FaUserAlt className="text-xl" />
             )}
+            <span className="text-indigo-700 font-medium">
+              Agent: {property.agent?.name}
+            </span>
+          </div>
+
+          {/* Contact Agent */}
+          <button className="w-full bg-indigo-600 text-white py-3 rounded-xl hover:bg-indigo-700 transition mb-10">
+            Contact Agent
+          </button>
+
+          {/* Reviews Section */}
+          <div>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-bold text-gray-800">Reviews</h2>
+              <button
+                onClick={() => setShowModal(true)}
+                className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-full hover:bg-indigo-700 transition"
+              >
+                <FaCommentDots /> Add a Review
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {reviews.length > 0 ? (
+                reviews.map((review, index) => (
+                  <div
+                    key={index}
+                    className="p-4 bg-gray-50 border rounded-xl shadow-sm"
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      {review.reviewerImage ? (
+                        <img
+                          src={review.reviewerImage}
+                          alt={review.reviewerName}
+                          className="w-6 h-6 rounded-full"
+                        />
+                      ) : (
+                        <FaUserAlt />
+                      )}
+                      <span className="font-semibold text-indigo-700">
+                        {review.reviewerName}
+                      </span>
+                    </div>
+                    <p className="text-gray-700">{review.comment}</p>
+                  </div>
+                ))
+              ) : (
+                <p className="text-gray-500">No reviews yet.</p>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* More Properties Slider */}
+      <div className="mt-16">
+        <h2 className="text-2xl font-bold text-gray-800 mb-6">
+          More Properties You May Like
+        </h2>
+        <div className="overflow-hidden">
+          <div className="flex gap-6 animate-scroll">
+            {moreProperties.map((p) => (
+              <div
+                key={p.id}
+                className="min-w-[250px] bg-white rounded-xl shadow-md overflow-hidden"
+              >
+                <img
+                  src={p.image}
+                  alt={p.title}
+                  className="h-40 w-full object-cover"
+                />
+                <div className="p-4">
+                  <h3 className="font-bold text-indigo-700">{p.title}</h3>
+                  <p className="text-gray-600">{p.location}</p>
+                  <p className="text-indigo-600 font-semibold">{p.price}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -271,13 +265,9 @@ const PropertyDetails = () => {
               className="w-full h-32 p-3 border rounded-lg outline-none"
               placeholder="Your review here..."
             />
-            <button
-              onClick={() => submitReviewMutation.mutate()}
-              disabled={submitReviewMutation.isLoading}
-              className="mt-4 w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition"
-            >
+            <button className="mt-4 w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition">
               <FaPaperPlane className="inline mr-2" />
-              {submitReviewMutation.isLoading ? "Submitting..." : "Submit Review"}
+              Submit Review
             </button>
           </div>
         </div>
