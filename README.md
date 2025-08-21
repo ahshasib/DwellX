@@ -1,7 +1,6 @@
 # 🏠 Real Estate Platform (DwellX)
 
-# Live Link:
- https://dwellx-3223b.web.app
+ Live Link: https://dwellx-3223b.web.app
 
 ## 📚 Overview
 
