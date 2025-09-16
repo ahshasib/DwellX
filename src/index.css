@@ -138,3 +138,11 @@ html {
 .glow-effect {
   animation: glowPulse 6s ease-in-out infinite;
 }
+
+/* tailwind global CSS বা component level CSS */
+.slick-slide {
+  padding: 0 0.5rem; /* slide এর মধ্যে horizontal gap */
+}
+.slick-list {
+  margin: 0 -0.5rem; /* overall negative margin যাতে slide edges align থাকে */
+}

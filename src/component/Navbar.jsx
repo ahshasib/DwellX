@@ -87,7 +87,7 @@ const Navbar = () => {
           </label>
           <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52 z-[60]">
             {menuItems}
-            <li><ThemeToggle /></li>
+            {/* <li><ThemeToggle /></li> */}
             {user ? (
               <>
                 <li>
@@ -112,7 +112,7 @@ const Navbar = () => {
 
         {/* User Section */}
         <div className="hidden lg:flex items-center gap-4">
-          <ThemeToggle />
+          {/* <ThemeToggle /> */}
           {user ? (
             <>
               <img

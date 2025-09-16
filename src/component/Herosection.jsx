@@ -14,7 +14,7 @@ const Herosection = () => {
         <img
           src="./b4.jpg"
           alt="Luxury House"
-          className="absolute bottom-0 left-0 w-full h-[60vh] object-bottom"
+          className="absolute bottom-0 left-0 w-full h-[70vh] object-bottom"
         />
 
 
