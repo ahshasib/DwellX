@@ -10,15 +10,17 @@ const Herosection = () => {
   return (
     <div className="h-screen w-full mt-0 md:-mt-7">
       {/* Slide */}
-      <div className="relative min-h-screen w-full overflow-hidden ">
+      <div className="relative min-h-screen w-full overflow-hidden">
+        {/* Background Image */}
         <img
-          src="./b4.jpg"
+          src="./b5.jpg"
           alt="Luxury House"
-          className="absolute bottom-0 left-0 w-full h-[70vh] object-bottom"
+          className="absolute inset-0 w-full bottom-0 left-0 h-[100%]"
         />
 
+        {/* Shadow Overlay */}
+        <div className="absolute inset-0 bg-indigo-100/20"></div>
 
-        {/* Overlays */}
         {/* Animated Glow Overlays */}
         <div className="absolute inset-0 flex justify-between pointer-events-none">
           {/* Left Glow */}
@@ -27,7 +29,6 @@ const Herosection = () => {
           {/* Right Glow */}
           <div className="glow-effect absolute top-1/4 right-0 w-72 h-72 bg-blue-300/40 rounded-full blur-3xl"></div>
         </div>
-
 
         {/* Main Content */}
         <motion.div
@@ -55,7 +56,7 @@ const Herosection = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.6 }}
-            className="flex md:flex-row justify-center gap-4 mt-8"
+            className="flex md:flex-row justify-center gap-4 mt-8 items-center"
           >
             <RotatingSparkleButton size={24} />
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-center bg-gradient-to-r from-pink-600 via-indigo-700 to-pink-600 bg-clip-text text-transparent">
@@ -88,10 +89,9 @@ const Herosection = () => {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.9, duration: 0.6 }}
-            className="mt-12 w-full max-w-4xl bg-white rounded-3xl py-8 px-4 sm:px-6 md:px-10 
+            className="mt-12 w-full max-w-4xl bg-white/20 backdrop-blur-md rounded-3xl py-8 px-4 sm:px-6 md:px-10 
              shadow-lg ring-2 ring-violet-100 ring-offset-2"
           >
-
             {/* Category Buttons */}
             <div className="flex flex-wrap justify-center gap-3 mb-6">
               {["🏢 Apartments", "🏠 Houses", "🏡 Villas", "🛏️ Studios"].map(
@@ -107,7 +107,7 @@ const Herosection = () => {
             </div>
 
             {/* Search */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 border border-gray-200 bg-white/90 rounded-full shadow-md shadow-violet-100 px-4 py-3">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 border border-gray-200 bg-white/90 rounded-full shadow-md px-4 py-3">
               <input
                 type="text"
                 placeholder="Search by location or keyword..."

@@ -55,7 +55,7 @@ const Navbar = () => {
   )
 
   return (
-    <div className="bg-white border-b-2 border-indigo-100 shadow-lg fixed top-0 left-0 w-full z-50">
+    <div className="bg-white/20 backdrop-blur-md border-b-2 border-indigo-100 shadow-lg fixed top-0 left-0 w-full z-50">
       <div className="navbar w-11/12 max-w-7xl mx-auto flex justify-between">
 
         {/* Logo */}
