@@ -28,25 +28,38 @@ const Navbar = () => {
   const menuItems = (
     <>
       <li>
-        <NavLink to="/" className="font-semibold text-gray-600 hover:text-indigo-600 transition-all flex items-center gap-1">
+        <NavLink to="/" className=" text-gray-600 hover:text-indigo-600 transition-all flex items-center gap-1">
           <FaHome /> Home
         </NavLink>
       </li>
       <li>
-        <NavLink to="/allproperties" className="font-semibold text-gray-600 hover:text-indigo-600 transition-all flex items-center gap-1">
+        <NavLink to="/allproperties" className=" text-gray-600 hover:text-indigo-600 transition-all flex items-center gap-1">
           <FaBuilding /> Properties
         </NavLink>
 
       </li>
+      
       <li>
-        <NavLink to="/aboutUs" className="font-semibold text-gray-600 hover:text-indigo-600 transition-all flex items-center gap-1">
+        <NavLink to="/aboutUs" className=" text-gray-600 hover:text-indigo-600 transition-all flex items-center gap-1">
+        <FaRegAddressCard /> AboutUS
+        </NavLink>
+        
+      </li>
+      <li>
+        <NavLink to="/aboutUs" className=" bg-gradient-to-r from-orange-400 via-red-500 to-orange-600 text-white shadow-xl transition-all flex items-center gap-1">
+        <FaRegAddressCard /> Contact
+        </NavLink>
+        
+      </li>
+      <li>
+        <NavLink to="/aboutUs" className=" text-gray-600 hover:text-indigo-600 transition-all flex items-center gap-1">
         <FaRegAddressCard /> AboutUS
         </NavLink>
         
       </li>
       {user && (
         <li>
-          <NavLink to="/dashboard" className="font-semibold text-gray-600 hover:text-indigo-600 transition-all flex items-center gap-1">
+          <NavLink to="/dashboard" className=" text-gray-600 hover:text-indigo-600 transition-all flex items-center gap-1">
             <FaTachometerAlt /> Dashboard
           </NavLink>
         </li>
@@ -105,7 +118,7 @@ const Navbar = () => {
 
         {/* Desktop Menu */}
         <div className="hidden lg:flex items-center gap-10">
-          <ul className="menu menu-horizontal px-1 flex gap-6 items-center">
+          <ul className="menu menu-horizontal px-1 flex gap-3 items-center">
             {menuItems}
           </ul>
         </div>
