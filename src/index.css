@@ -56,8 +56,8 @@
   padding: 0;
 }
 .active{
-  background: linear-gradient(to right, rgb(37, 117, 247), rgb(92, 169, 205));
-  color: white;
+  background: linear-gradient(to right, #e0e7ff, #f3e8ff);
+  color: rgb(96, 103, 246);
   
 }
 
