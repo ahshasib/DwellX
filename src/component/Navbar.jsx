@@ -3,8 +3,10 @@ import { Link, NavLink } from 'react-router'
 import Swal from 'sweetalert2'
 import ThemeToggle from './ThemeToggle'
 import { FaBars, FaBuilding, FaHome, FaRegAddressCard, FaTachometerAlt, FaUserCircle } from 'react-icons/fa'
+import { FiMessageCircle } from "react-icons/fi";
 import { AuthContext } from './../context/AuthProvider'
 import RotatingSparkleButton from './RotatingSparkleButton'
+import { LucideBotMessageSquare } from 'lucide-react'
 
 const Navbar = () => {
   const { user, logout } = use(AuthContext)
@@ -45,18 +47,6 @@ const Navbar = () => {
         </NavLink>
         
       </li>
-      <li>
-        <NavLink to="/aboutUs" className=" bg-gradient-to-r from-orange-400 via-red-500 to-orange-600 text-white shadow-xl transition-all flex items-center gap-1">
-        <FaRegAddressCard /> Contact
-        </NavLink>
-        
-      </li>
-      <li>
-        <NavLink to="/aboutUs" className=" text-gray-600 hover:text-indigo-600 transition-all flex items-center gap-1">
-        <FaRegAddressCard /> AboutUS
-        </NavLink>
-        
-      </li>
       {user && (
         <li>
           <NavLink to="/dashboard" className=" text-gray-600 hover:text-indigo-600 transition-all flex items-center gap-1">
@@ -64,6 +54,22 @@ const Navbar = () => {
           </NavLink>
         </li>
       )}
+      <li>
+        <NavLink to="/contact" className=" bg-gradient-to-r from-orange-400 via-red-500 to-orange-600 text-white shadow-xl transition-all flex items-center gap-1">
+        <FiMessageCircle size={20}/> Contact
+        </NavLink>
+        
+      </li>
+      <li>
+        <NavLink to="/aboutUs" className=" text-indigo-600 border border-indigo-200 bg-gradient-to-r from-indigo-200 to-purple-200 transition-all flex items-center gap-2 relative shadow-xl">
+        <div className="absolute top-1 left-1">
+                <RotatingSparkleButton size={16} />
+              </div>
+        <LucideBotMessageSquare size={20}/> Consultant
+        </NavLink>
+        
+      </li>
+      
     </>
   )
 
