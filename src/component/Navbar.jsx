@@ -61,7 +61,7 @@ const Navbar = () => {
         
       </li>
       <li>
-        <NavLink to="/aboutUs" className=" text-indigo-600 border border-indigo-200 bg-gradient-to-r from-indigo-200 to-purple-200 transition-all flex items-center gap-2 relative shadow-xl">
+        <NavLink to="/consultant" className=" text-indigo-600 border border-indigo-200 bg-gradient-to-r from-indigo-200 to-purple-200 transition-all flex items-center gap-2 relative shadow-xl">
         <div className="absolute top-1 left-1">
                 <RotatingSparkleButton size={16} />
               </div>

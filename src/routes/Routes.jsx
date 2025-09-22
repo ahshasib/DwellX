@@ -26,6 +26,7 @@ import MySoldProperties from "../pages/MySoldProperties";
 import DashboardLanding from "../pages/DashboardLanding";
 import AboutUs from "../pages/AboutUs";
 import Contact from "../pages/Contact";
+import Consultant from "../pages/Consultant";
 
 const router = createBrowserRouter([
   {
@@ -38,6 +39,7 @@ const router = createBrowserRouter([
        },
       { path: '/allproperties', element: <AllProperties /> },
       { path: '/contact', element: <Contact /> },
+      { path: '/consultant', element: <Consultant /> },
       { path: '/property/:id', element:<PrivateRoute> <UserRoute><PropertyDetails /></UserRoute></PrivateRoute> },
       { path: '/login', element: <Login /> },
       { path: '/register', element: <Register /> },
