@@ -65,6 +65,9 @@ const Navbar = () => {
         <div className="absolute top-1 left-1">
                 <RotatingSparkleButton size={16} />
               </div>
+              <div className="absolute -top-2 -right-1 bg-yellow-400 px-2 text-[10px] rounded">
+                new
+              </div>
         <LucideBotMessageSquare size={20}/> Consultant
         </NavLink>
         
