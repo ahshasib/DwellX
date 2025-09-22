@@ -124,8 +124,8 @@ const Consultant = () => {
           <defs>
             {/* Indigo → Violet Gradient */}
             <linearGradient id="waveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#A5B4FC"  /> 
-              <stop offset="100%" stopColor="#E0AAFF"  /> 
+              <stop offset="0%" stopColor="#A5B4FC" />
+              <stop offset="100%" stopColor="#E0AAFF" />
             </linearGradient>
           </defs>
 
@@ -144,25 +144,34 @@ const Consultant = () => {
         {consultants.map((consultant) => (
           <div
             key={consultant.id}
-            className="bg-white p-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all "
+            className="bg-white p-6 rounded-3xl shadow-xl hover:shadow-2xl hover:scale-105 transition-transform duration-300 relative overflow-hidden"
           >
-            <img
-              src={consultant.image}
-              alt={consultant.name}
-              className="w-24 h-24 rounded-full mx-auto shadow-lg"
-            />
-            <h3 className="text-xl font-bold text-gray-800 text-center mt-4">
+            {/* Consultant Image */}
+            <div className="w-28 h-28 mx-auto rounded-full shadow-lg ring-4 ring-indigo-200 overflow-hidden">
+              <img
+                src={consultant.image}
+                alt={consultant.name}
+                className="w-full h-full object-cover"
+              />
+            </div>
+
+            {/* Name & Specialty */}
+            <h3 className="text-2xl font-semibold text-gray-800 text-center mt-4">
               {consultant.name}
             </h3>
             <p className="text-sm text-gray-500 text-center">{consultant.specialty}</p>
+
+            {/* Contact Info */}
             <div className="mt-4 text-gray-600 text-sm space-y-1 text-center">
               <p className="flex items-center justify-center gap-2">
-                <FaEnvelope /> {consultant.email}
+                <FaEnvelope className="text-indigo-400" /> {consultant.email}
               </p>
               <p className="flex items-center justify-center gap-2">
-                <FaPhone /> {consultant.phone}
+                <FaPhone className="text-indigo-400" /> {consultant.phone}
               </p>
             </div>
+
+            {/* Rating */}
             <div className="flex justify-center mt-3 text-yellow-500">
               {Array.from({ length: 5 }, (_, i) => (
                 <FaStar
@@ -171,8 +180,16 @@ const Consultant = () => {
                 />
               ))}
             </div>
+
+            {/* Book Now Button */}
+            <div className="mt-6 flex justify-center">
+              <button className="bg-indigo-500 text-white px-6 py-2 rounded-full font-semibold hover:bg-indigo-600 hover:scale-105 transition-all duration-300 shadow-md">
+                Book Now
+              </button>
+            </div>
           </div>
         ))}
+
       </div>
     </div>
   );
