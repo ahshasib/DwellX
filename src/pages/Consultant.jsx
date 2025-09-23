@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { FaMicrophone, FaEnvelope, FaPhone, FaStar } from "react-icons/fa"; // Icons
+import CursorParticles from "../component/CursorParticles";
 
 const consultants = [
   {
@@ -40,10 +41,11 @@ const consultants = [
     specialty: "Beachfront Villas",
   },
 ];
-
+// bg-gradient-to-br from-blue-50 to-blue-100
 const Consultant = () => {
   return (
-    <div className="-mt-7 relative flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 overflow-hidden">
+    <div className="-mt-7 relative flex flex-col items-center justify-center min-h-screen  overflow-hidden">
+      <CursorParticles /> 
       {/* Title */}
       <h1 className="mt-20 text-4xl md:text-5xl font-bold text-blue-800 text-center">
         Our Consultants
