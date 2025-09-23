@@ -40,6 +40,24 @@ const consultants = [
     rating: 5.0,
     specialty: "Beachfront Villas",
   },
+  {
+    id: 5,
+    name: "David Miller",
+    image: "https://randomuser.me/api/portraits/men/32.jpg",
+    email: "david.miller@realestate.com",
+    phone: "+1 234 567 890",
+    rating: 4.8,
+    specialty: "Luxury Apartments",
+  },
+  {
+    id: 6,
+    name: "Sophia Johnson",
+    image: "https://randomuser.me/api/portraits/women/44.jpg",
+    email: "sophia.johnson@realestate.com",
+    phone: "+1 987 654 321",
+    rating: 4.9,
+    specialty: "Commercial Properties",
+  },
 ];
 // bg-gradient-to-br from-blue-50 to-blue-100
 const Consultant = () => {
@@ -141,58 +159,62 @@ const Consultant = () => {
       </div>
 
       {/* Consultant Cards */}
-      <div className="w-full py-12 px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8
+      <div className="w-full py-12 px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6
                 bg-gradient-to-r from-indigo-300 to-[#E0AAFF]">
-        {consultants.map((consultant) => (
-          <div
-            key={consultant.id}
-            className="bg-white p-6 rounded-3xl shadow-xl hover:shadow-2xl hover:scale-105 transition-transform duration-300 relative overflow-hidden"
-          >
-            {/* Consultant Image */}
-            <div className="w-28 h-28 mx-auto rounded-full shadow-lg ring-4 ring-indigo-200 overflow-hidden">
-              <img
-                src={consultant.image}
-                alt={consultant.name}
-                className="w-full h-full object-cover"
-              />
-            </div>
-
-            {/* Name & Specialty */}
-            <h3 className="text-2xl font-semibold text-gray-800 text-center mt-4">
-              {consultant.name}
-            </h3>
-            <p className="text-sm text-gray-500 text-center">{consultant.specialty}</p>
-
-            {/* Contact Info */}
-            <div className="mt-4 text-gray-600 text-sm space-y-1 text-center">
-              <p className="flex items-center justify-center gap-2">
-                <FaEnvelope className="text-indigo-400" /> {consultant.email}
-              </p>
-              <p className="flex items-center justify-center gap-2">
-                <FaPhone className="text-indigo-400" /> {consultant.phone}
-              </p>
-            </div>
-
-            {/* Rating */}
-            <div className="flex justify-center mt-3 text-yellow-500">
-              {Array.from({ length: 5 }, (_, i) => (
-                <FaStar
-                  key={i}
-                  className={i < Math.round(consultant.rating) ? "text-yellow-500" : "text-gray-300"}
-                />
-              ))}
-            </div>
-
-            {/* Book Now Button */}
-            <div className="mt-6 flex justify-center">
-              <button className="bg-indigo-500 text-white px-6 py-2 rounded-full font-semibold hover:bg-indigo-600 hover:scale-105 transition-all duration-300 shadow-md">
-                Book Now
-              </button>
-            </div>
-          </div>
-        ))}
-
+  {consultants.map((consultant) => (
+    <div
+      key={consultant.id}
+      className="bg-white/80 backdrop-blur-lg p-5 rounded-2xl border border-indigo-100
+                 shadow-md hover:shadow-xl hover:-translate-y-2 hover:scale-[1.02]
+                 transition-all duration-300 relative overflow-hidden"
+    >
+      {/* Image */}
+      <div className="w-20 h-20 mx-auto rounded-full shadow-md ring-2 ring-indigo-300 overflow-hidden">
+        <img
+          src={consultant.image}
+          alt={consultant.name}
+          className="w-full h-full object-cover"
+        />
       </div>
+
+      {/* Name */}
+      <h3 className="text-lg font-semibold text-gray-800 text-center mt-3">
+        {consultant.name}
+      </h3>
+      <p className="text-xs text-gray-500 text-center">{consultant.specialty}</p>
+
+      {/* Contact */}
+      <div className="mt-3 text-gray-600 text-xs space-y-1 text-center">
+        <p className="flex items-center justify-center gap-1">
+          <FaEnvelope className="text-indigo-400" size={12} /> {consultant.email}
+        </p>
+        <p className="flex items-center justify-center gap-1">
+          <FaPhone className="text-indigo-400" size={12} /> {consultant.phone}
+        </p>
+      </div>
+
+      {/* Rating */}
+      <div className="flex justify-center mt-2 text-yellow-500 text-sm">
+        {Array.from({ length: 5 }, (_, i) => (
+          <FaStar
+            key={i}
+            className={i < Math.round(consultant.rating) ? "text-yellow-500" : "text-gray-300"}
+          />
+        ))}
+      </div>
+
+      {/* Button */}
+      <div className="mt-4 flex justify-center">
+        <button className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white px-4 py-1.5 text-sm 
+                           rounded-full font-medium hover:from-indigo-600 hover:to-purple-600 
+                           hover:shadow-lg transition-all duration-300">
+          Book Now
+        </button>
+      </div>
+    </div>
+  ))}
+</div>
+
     </div>
   );
 };
