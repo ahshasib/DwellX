@@ -28,6 +28,7 @@ import AboutUs from "../pages/AboutUs";
 import Contact from "../pages/Contact";
 import Consultant from "../pages/Consultant";
 
+
 const router = createBrowserRouter([
   {
     path: '/',
@@ -38,6 +39,7 @@ const router = createBrowserRouter([
         
        },
       { path: '/allproperties', element: <AllProperties /> },
+      
       { path: '/contact', element: <Contact /> },
       { path: '/consultant', element: <Consultant /> },
       { path: '/property/:id', element:<PrivateRoute> <UserRoute><PropertyDetails /></UserRoute></PrivateRoute> },

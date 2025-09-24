@@ -41,6 +41,8 @@ const Navbar = () => {
 
       </li>
       
+      
+      
       <li>
         <NavLink to="/aboutUs" className=" text-gray-600 hover:text-indigo-600 transition-all flex items-center gap-1">
         <FaRegAddressCard /> AboutUS
